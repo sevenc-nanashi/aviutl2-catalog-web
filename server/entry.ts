@@ -1,6 +1,7 @@
 import icon from "./icon.svg?raw";
-import { serve, apply } from "@photonjs/hono";
+import vike from "@vikejs/hono";
 import { Hono } from "hono";
+import { showRoutes } from "hono/dev";
 import z from "zod";
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
@@ -27,7 +28,9 @@ app.get("/api/badge/:name", async (c) => {
   )
     .then((res) => res.json())
     .then((data) => minimumCatalogSchema.parse(data));
-  const packageData = data.find((pkg) => pkg.id.toLowerCase() === name.toLowerCase());
+  const packageData = data.find(
+    (pkg) => pkg.id.toLowerCase() === name.toLowerCase(),
+  );
   if (!packageData) {
     return c.json({
       schemaVersion: 1,
@@ -51,7 +54,9 @@ app.get("/badge/v/:packageName", (c) => {
   const url = new URL(c.req.url);
   const baseUrl =
     // NOTE: shields.ioはhttpsでしか読み込めないので、httpsでアクセスされた場合（=Branch Preview）でのみオリジンを使う
-    url.protocol === "https:" ? url.origin : "https://aviutl2-catalog-badge.sevenc7c.workers.dev";
+    url.protocol === "https:"
+      ? url.origin
+      : "https://aviutl2-catalog-badge.sevenc7c.workers.dev";
   const apiUrl = `${baseUrl}/api/badge/${encodeURIComponent(packageName)}`;
   const shieldsUrl = new URL("https://img.shields.io/endpoint");
   shieldsUrl.searchParams.set("url", apiUrl);
@@ -61,8 +66,10 @@ app.get("/badge/v/:packageName", (c) => {
   }
   return c.redirect(shieldsUrl.toString());
 });
-apply(app);
+vike(app);
+showRoutes(app);
 
-export default serve(app, {
+export default {
   port,
-});
+  fetch: app.fetch,
+};
