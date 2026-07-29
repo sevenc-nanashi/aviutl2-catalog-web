@@ -6,7 +6,7 @@
     "preview": "vike build && vike preview",
     "deploy": "vike build && wrangler deploy",
     "generate-types": "wrangler types",
-    "test": "node --test --experimental-strip-types lib/catalog.test.ts server/download.test.ts server/markdown.test.ts",
+    "test": "node --test --experimental-strip-types lib/catalog.test.ts lib/packageList.test.ts server/download.test.ts server/markdown.test.ts",
     "lint": "oxlint .",
     "format": "oxfmt --write "
   },

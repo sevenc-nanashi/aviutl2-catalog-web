@@ -1,6 +1,7 @@
 import {
   defineConfig,
   presetAttributify,
+  presetIcons,
   presetWind4,
   PresetWind4Theme,
   transformerDirectives,
@@ -11,6 +12,7 @@ export default defineConfig<PresetWind4Theme>({
     presetWind4({
       dark: "media",
     }),
+    presetIcons(),
     presetAttributify({
       prefixedOnly: true,
     }),

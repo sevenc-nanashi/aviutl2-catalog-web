@@ -3,6 +3,10 @@
 <template>
   <header class="site-header">
     <a href="/" class="ui-focus-ring">AviUtl2 Catalog Web</a>
+    <nav aria-label="メインナビゲーション">
+      <a href="/" class="ui-focus-ring">パッケージ一覧</a>
+      <a href="/badge" class="ui-focus-ring">バッジを作成</a>
+    </nav>
   </header>
   <div un-p="4">
     <slot />
