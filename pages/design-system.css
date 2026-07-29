@@ -1,0 +1,124 @@
+:root {
+  color-scheme: light dark;
+
+  /* Spacing */
+  --ui-space-1: 0.25rem;
+  --ui-space-2: 0.5rem;
+  --ui-space-3: 0.75rem;
+  --ui-space-4: 1rem;
+  --ui-space-6: 1.5rem;
+  --ui-space-8: 2rem;
+  --ui-space-12: 3rem;
+
+  /* Surfaces */
+  --ui-page: light-dark(theme("colors.slate.50"), theme("colors.slate.950"));
+  --ui-surface: light-dark(theme("colors.white"), theme("colors.slate.900"));
+  --ui-surface-raised: light-dark(theme("colors.white"), theme("colors.slate.800"));
+  --ui-surface-muted: light-dark(theme("colors.slate.50"), theme("colors.slate.800"));
+  --ui-border: light-dark(theme("colors.slate.200"), theme("colors.slate.800"));
+  --ui-border-muted: light-dark(theme("colors.slate.200"), theme("colors.slate.700"));
+  --ui-divider: light-dark(theme("colors.slate.100"), theme("colors.slate.800"));
+
+  /* Text and accents */
+  --ui-text: light-dark(theme("colors.slate.900"), theme("colors.slate.100"));
+  --ui-text-strong: light-dark(theme("colors.slate.950"), theme("colors.white"));
+  --ui-text-muted: light-dark(theme("colors.slate.600"), theme("colors.slate.300"));
+  --ui-text-subtle: light-dark(theme("colors.slate.500"), theme("colors.slate.400"));
+  --ui-primary: light-dark(theme("colors.blue.600"), theme("colors.blue.500"));
+  --ui-primary-hover: light-dark(theme("colors.blue.700"), theme("colors.blue.400"));
+  --ui-primary-soft: light-dark(theme("colors.blue.50"), theme("colors.blue.900"));
+  --ui-primary-border: light-dark(theme("colors.blue.200"), theme("colors.blue.800"));
+  --ui-primary-text: light-dark(theme("colors.blue.700"), theme("colors.blue.300"));
+  --ui-focus: theme("colors.blue.500");
+
+  /* Shape and depth */
+  --ui-radius-lg: 0.5rem;
+  --ui-radius-xl: 0.75rem;
+  --ui-radius-2xl: 1rem;
+  --ui-shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06);
+
+  /* Type */
+  --ui-text-xs: 0.75rem;
+  --ui-text-sm: 0.875rem;
+  --ui-text-base: 1rem;
+  --ui-text-lg: 1.125rem;
+  --ui-text-xl: 1.25rem;
+  --ui-text-2xl: 1.5rem;
+}
+
+.ui-surface {
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-2xl);
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.ui-surface-section {
+  padding: var(--ui-space-6);
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-2xl);
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.ui-button {
+  min-height: 2.5rem;
+  padding: var(--ui-space-2) var(--ui-space-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ui-space-2);
+  border-radius: var(--ui-radius-xl);
+  font-size: var(--ui-text-sm);
+  font-weight: 500;
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    color 150ms ease-out,
+    transform 150ms ease-out;
+}
+
+.ui-button-primary {
+  background: var(--ui-primary);
+  border: 1px solid transparent;
+  color: theme("colors.white");
+}
+
+.ui-button-primary:hover {
+  background: var(--ui-primary-hover);
+}
+
+.ui-button:active {
+  transform: translateY(1px);
+}
+
+.ui-badge {
+  width: fit-content;
+  padding: var(--ui-space-1) var(--ui-space-3);
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  font-size: var(--ui-text-xs);
+  font-weight: 600;
+}
+
+.ui-badge-primary {
+  background: var(--ui-primary-soft);
+  border: 1px solid var(--ui-primary-border);
+  color: var(--ui-primary-text);
+}
+
+.ui-badge-neutral {
+  background: var(--ui-surface-muted);
+  border: 1px solid var(--ui-border-muted);
+  color: var(--ui-text-muted);
+}
+
+.ui-focus-ring:focus-visible {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 3px;
+}
+
+.ui-muted {
+  color: var(--ui-text-subtle);
+}

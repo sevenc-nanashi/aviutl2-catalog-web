@@ -6,8 +6,8 @@ import vikeVue from "vike-vue/config";
 
 export default {
   // https://vike.dev/head-tags
-  title: "AviUtl2 Catalog Badge",
-  description: "AviUtl2 Catalogの非公式バッジ。",
+  title: "AviUtl2 Catalog Web",
+  description: "AviUtl2 Catalogの非公式Webビューワー",
 
   extends: [vikeVue],
 } as Config;

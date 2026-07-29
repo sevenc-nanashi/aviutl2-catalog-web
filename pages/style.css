@@ -1,13 +1,37 @@
 body {
+  margin: 0;
 }
 
 #app {
   min-height: 100vh;
-  background: light-dark(theme("colors.slate.50"), theme("colors.slate.950"));
-  color: light-dark(theme("colors.slate.800"), theme("colors.slate.100"));
+  background: var(--ui-page);
+  color: var(--ui-text);
   font-family: theme("font.sans");
   display: flex;
   flex-direction: column;
+}
+
+.site-header {
+  padding: var(--ui-space-4);
+  background: color-mix(in srgb, var(--ui-surface) 80%, transparent);
+  border-bottom: 1px solid var(--ui-border);
+  font-size: var(--ui-text-2xl);
+  font-weight: 700;
+}
+
+.site-header a {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.site-footer {
+  padding: var(--ui-space-2);
+  background: color-mix(in srgb, var(--ui-surface) 80%, transparent);
+  border-top: 1px solid var(--ui-border);
+  color: var(--ui-text-subtle);
+  font-size: var(--ui-text-xs);
+  text-align: center;
 }
 
 input[type="text"],
@@ -15,25 +39,32 @@ input[type="email"],
 input[type="password"],
 textarea,
 select {
-  background: light-dark(theme("colors.white"), theme("colors.slate.800"));
-  border: 1px solid light-dark(theme("colors.slate.200"), theme("colors.slate.700"));
-  border-radius: theme("radius.lg");
-  color: light-dark(theme("colors.slate.900"), theme("colors.slate.100"));
-  font-size: theme("text.sm.fontSize");
+  background: var(--ui-surface-raised);
+  border: 1px solid var(--ui-border-muted);
+  border-radius: var(--ui-radius-lg);
+  color: var(--ui-text);
+  font-size: var(--ui-text-sm);
 
-  @apply px-3 py-2 transition focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm;
+  @apply px-3 py-2 transition shadow-sm;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 2px;
 }
 
 code {
-  background: light-dark(theme("colors.slate.100"), theme("colors.slate.800"));
+  background: var(--ui-surface-muted);
   padding: theme("spacing");
-  border-radius: theme("radius.md");
+  border-radius: var(--ui-radius-lg);
   font-family: theme("font.mono");
-  font-size: theme("text.sm.fontSize");
+  font-size: var(--ui-text-sm);
 }
 
 a.link {
-  color: light-dark(theme("colors.blue.600"), theme("colors.blue.400"));
+  color: var(--ui-primary-text);
   display: inline-flex;
   align-items: center;
   word-break: break-all;

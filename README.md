@@ -1,6 +1,6 @@
-# AviUtl2 Catalog Badge
+# AviUtl2 Catalog Web
 
-[AviUtl2 Catalog](https://github.com/Neosku/aviutl2-catalog) 用のバッジ。
+[AviUtl2 Catalog](https://github.com/Neosku/aviutl2-catalog) のWeb版ビューワー。
 
 ## ライセンス
 

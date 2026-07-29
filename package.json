@@ -6,13 +6,19 @@
     "preview": "vike build && vike preview",
     "deploy": "vike build && wrangler deploy",
     "generate-types": "wrangler types",
+    "test": "node --test --experimental-strip-types lib/catalog.test.ts server/download.test.ts server/markdown.test.ts",
     "lint": "oxlint .",
     "format": "oxfmt --write "
   },
   "dependencies": {
     "@universal-middleware/core": "^0.4.18",
     "@vikejs/hono": "^0.2.1",
+    "entities": "^8.0.0",
     "hono": "^4.12.32",
+    "htmlparser2": "^12.0.0",
+    "markdown-it": "^14.3.0",
+    "markdown-it-github-alerts": "^1.0.1",
+    "shiki": "^4.3.1",
     "vike": "^0.4.260",
     "vike-vue": "^0.9.13",
     "vue": "^3.5.40"
@@ -21,6 +27,7 @@
     "@cloudflare/vite-plugin": "^1.47.0",
     "@fontsource/noto-sans-jp": "^5.3.0",
     "@iconify-json/lucide": "^1.2.119",
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^26.1.1",
     "@unocss/reset": "^66.7.5",
     "@vitejs/plugin-vue": "^6.0.8",
