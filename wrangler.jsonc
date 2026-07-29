@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "aviutl2-catalog-badge",
+  "name": "aviutl2-catalog-web",
   "compatibility_date": "2025-09-06",
   "main": "server/entry.ts",
 }
