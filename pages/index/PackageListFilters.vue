@@ -10,11 +10,11 @@ import {
 
 const { t } = useI18n({ useScope: "global" });
 
-const deprecationIconByValue = {
-  active: "i-lucide-circle-check-big",
-  deprecated: "i-lucide-triangle-alert",
-  all: "i-lucide-triangle-alert",
-} as const satisfies Record<PackageDeprecationFilter, string>;
+// const deprecationIconByValue = {
+//   active: "i-lucide-circle-check-big",
+//   deprecated: "i-lucide-triangle-alert",
+//   all: "i-lucide-triangle-alert",
+// } as const satisfies Record<PackageDeprecationFilter, string>;
 
 const sortIconByValue = {
   popularity_desc: "i-lucide-crown",
@@ -51,12 +51,12 @@ function handleSearch(event: Event): void {
   emit("update:searchQuery", event.target.value);
 }
 
-function handleDeprecation(event: Event): void {
-  if (!(event.target instanceof HTMLSelectElement)) {
-    throw new Error("Deprecation filter target is not a select element");
-  }
-  emit("update:deprecationFilter", event.target.value as PackageDeprecationFilter);
-}
+// function handleDeprecation(event: Event): void {
+//   if (!(event.target instanceof HTMLSelectElement)) {
+//     throw new Error("Deprecation filter target is not a select element");
+//   }
+//   emit("update:deprecationFilter", event.target.value as PackageDeprecationFilter);
+// }
 
 function handleSort(event: Event): void {
   if (!(event.target instanceof HTMLSelectElement)) {
@@ -94,22 +94,22 @@ function handleSort(event: Event): void {
           <span aria-hidden="true" class="i-lucide-filter heading-icon" />
           <span>{{ t("home.filters.label") }}</span>
         </div>
-        <label class="select-control">
-          <span
-            aria-hidden="true"
-            :class="deprecationIconByValue[deprecationFilter]"
-            class="control-icon"
-          />
-          <select
-            :aria-label="t('home.filters.deprecation')"
-            :value="deprecationFilter"
-            @change="handleDeprecation"
-          >
-            <option value="active">{{ t("home.deprecationStatus.active") }}</option>
-            <option value="deprecated">{{ t("home.deprecationStatus.deprecated") }}</option>
-            <option value="all">{{ t("home.deprecationStatus.all") }}</option>
-          </select>
-        </label>
+        <!-- <label class="select-control"> -->
+        <!--   <span -->
+        <!--     aria-hidden="true" -->
+        <!--     :class="deprecationIconByValue[deprecationFilter]" -->
+        <!--     class="control-icon" -->
+        <!--   /> -->
+        <!--   <select -->
+        <!--     :aria-label="t('home.filters.deprecation')" -->
+        <!--     :value="deprecationFilter" -->
+        <!--     @change="handleDeprecation" -->
+        <!--   > -->
+        <!--     <option value="active">{{ t("home.deprecationStatus.active") }}</option> -->
+        <!--     <option value="deprecated">{{ t("home.deprecationStatus.deprecated") }}</option> -->
+        <!--     <option value="all">{{ t("home.deprecationStatus.all") }}</option> -->
+        <!--   </select> -->
+        <!-- </label> -->
         <button
           type="button"
           class="tag-toggle ui-button ui-button-action ui-button-secondary ui-focus-ring"
@@ -119,10 +119,14 @@ function handleSort(event: Event): void {
         >
           <span aria-hidden="true" class="i-lucide-filter tag-filter-icon" />
           {{ t("common.labels.tags") }}
-          <span v-if="selectedTags.length > 0" class="tag-count">{{ selectedTags.length }}</span>
+          <span v-if="selectedTags.length > 0" class="tag-count">{{
+            selectedTags.length
+          }}</span>
           <span
             aria-hidden="true"
-            :class="tagsExpanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+            :class="
+              tagsExpanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'
+            "
             class="toggle-icon"
           />
         </button>
@@ -134,7 +138,11 @@ function handleSort(event: Event): void {
         <span aria-hidden="true" class="i-lucide-layers heading-icon" />
         <span>{{ t("home.filters.category") }}</span>
       </div>
-      <div class="category-tabs" role="group" :aria-label="t('home.filters.categoryAria')">
+      <div
+        class="category-tabs"
+        role="group"
+        :aria-label="t('home.filters.categoryAria')"
+      >
         <button
           v-for="category in packageCategories"
           :key="category.key"
@@ -155,19 +163,40 @@ function handleSort(event: Event): void {
         <span>{{ t("home.filters.sort") }}</span>
       </div>
       <label class="select-control">
-        <span aria-hidden="true" :class="sortIconByValue[sortOrder]" class="control-icon" />
-        <select :aria-label="t('home.filters.sort')" :value="sortOrder" @change="handleSort">
-          <option value="popularity_desc">{{ t("home.sortOptions.popularity_desc") }}</option>
-          <option value="trend_desc">{{ t("home.sortOptions.trend_desc") }}</option>
-          <option value="added_desc">{{ t("home.sortOptions.added_desc") }}</option>
-          <option value="updated_desc">{{ t("home.sortOptions.updated_desc") }}</option>
+        <span
+          aria-hidden="true"
+          :class="sortIconByValue[sortOrder]"
+          class="control-icon"
+        />
+        <select
+          :aria-label="t('home.filters.sort')"
+          :value="sortOrder"
+          @change="handleSort"
+        >
+          <option value="popularity_desc">
+            {{ t("home.sortOptions.popularity_desc") }}
+          </option>
+          <option value="trend_desc">
+            {{ t("home.sortOptions.trend_desc") }}
+          </option>
+          <option value="added_desc">
+            {{ t("home.sortOptions.added_desc") }}
+          </option>
+          <option value="updated_desc">
+            {{ t("home.sortOptions.updated_desc") }}
+          </option>
         </select>
       </label>
     </div>
 
     <div v-if="selectedTags.length > 0 && !tagsExpanded" class="selected-tags">
       <span>{{ t("home.filters.selected") }}</span>
-      <button v-for="tag in selectedTags" :key="tag" type="button" @click="emit('toggleTag', tag)">
+      <button
+        v-for="tag in selectedTags"
+        :key="tag"
+        type="button"
+        @click="emit('toggleTag', tag)"
+      >
         {{ tag }}
         <span aria-hidden="true" class="i-lucide-x selected-tag-icon" />
       </button>
@@ -182,7 +211,11 @@ function handleSort(event: Event): void {
           <span aria-hidden="true" class="i-lucide-tags heading-icon" />
           {{ t("home.filters.allTags") }}
         </strong>
-        <button v-if="selectedTags.length > 0" type="button" @click="emit('clearTags')">
+        <button
+          v-if="selectedTags.length > 0"
+          type="button"
+          @click="emit('clearTags')"
+        >
           {{ t("home.filters.clearSelection") }}
         </button>
       </div>

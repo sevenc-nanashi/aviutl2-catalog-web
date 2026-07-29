@@ -11,8 +11,12 @@ const props = defineProps<{
 }>();
 const { locale, t } = useI18n({ useScope: "global" });
 
-const catalogUrl = computed(() => `aviutl2-catalog://package/${props.packageInfo.id}`);
-const directDownloadUrl = computed(() => shouldShowDirectDownload(props.packageInfo));
+const catalogUrl = computed(
+  () => `aviutl2-catalog://package/${props.packageInfo.id}`,
+);
+const directDownloadUrl = computed(() =>
+  shouldShowDirectDownload(props.packageInfo),
+);
 const latestDate = computed(() => {
   const releaseDate = latestReleaseDate(props.packageInfo);
   if (releaseDate === undefined) {
@@ -22,7 +26,9 @@ const latestDate = computed(() => {
     dateStyle: "medium",
   }).format(new Date(`${releaseDate}T00:00:00Z`));
 });
-const licenseTypes = computed(() => props.packageInfo.licenses.map((license) => license.type));
+const licenseTypes = computed(() =>
+  props.packageInfo.licenses.map((license) => license.type),
+);
 const packageType = computed(() => {
   const translationKey = packageTypeTranslationKey(props.packageInfo);
   if (translationKey === undefined) {
@@ -83,7 +89,11 @@ const packageType = computed(() => {
         <div v-if="packageInfo.tags.length > 0" class="metadata-group">
           <h3>{{ t("common.labels.tags") }}</h3>
           <div class="chip-list">
-            <span v-for="tag in packageInfo.tags" :key="tag" class="ui-badge ui-badge-neutral">
+            <span
+              v-for="tag in packageInfo.tags"
+              :key="tag"
+              class="ui-badge ui-badge-neutral"
+            >
               #{{ tag }}
             </span>
           </div>
@@ -118,7 +128,7 @@ const packageType = computed(() => {
         </a>
       </section>
 
-      <section class="action-panel ui-surface-section">
+      <section class="action-panel ui-surface-section gap-3">
         <a
           v-if="directDownloadUrl"
           :href="directDownloadUrl"
@@ -130,7 +140,6 @@ const packageType = computed(() => {
           {{ t("package.sidebar.directDownload") }}
         </a>
         <a
-          v-else
           :href="catalogUrl"
           class="primary-action ui-button ui-button-neutral-primary ui-focus-ring"
         >

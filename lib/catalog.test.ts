@@ -95,10 +95,12 @@ test("ヒーロー画像はサムネイルより詳細画像を優先する", ()
 });
 
 test("直接ダウンロード可能なパッケージはダウンロード先を返す", () => {
-  assert.equal(
-    shouldShowDirectDownload(createPackageInfo()),
-    "/api/package/example.package/download",
-  );
+  const packageInfo = createPackageInfo();
+  packageInfo.installer.install = [
+    { action: "download" },
+    { action: "copy", from: "{tmp}/package.auf2", to: "{pluginsDir}/package.auf2" },
+  ];
+  assert.equal(shouldShowDirectDownload(packageInfo), "/api/package/example.package/download");
 });
 
 test("BOOTHから取得するパッケージは直接ダウンロード先を返さない", () => {

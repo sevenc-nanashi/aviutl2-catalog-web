@@ -27,9 +27,7 @@ function isWithinDirectory(path: string, directory: string): boolean {
  *
  * 流石にau2pkgじゃないのにau2pkg形式の構造にしている人はいないでしょう...
  */
-export function shouldShowDirectDownload(
-  packageInfo: PackageInfo,
-): string | null {
+export function shouldShowDirectDownload(packageInfo: PackageInfo): string | null {
   if ("booth" in packageInfo.installer.source) {
     return null;
   }
@@ -37,39 +35,34 @@ export function shouldShowDirectDownload(
   const downloadUrl = `/api/package/${encodeURIComponent(packageInfo.id)}/download`;
 
   if (packageInfo.installer.install.length > 2) {
-    const isFirstActionDownload =
-      packageInfo.installer.install[0].action === "download";
-    const isSecondActionExtract =
-      packageInfo.installer.install[1].action === "extract";
-    const areCopiesAu2pkgLike = packageInfo.installer.install
-      .slice(2)
-      .every((action) => {
-        if (action.action !== "copy") {
-          return false;
-        }
-        for (const allowed of allowedCopyDestinations) {
-          if (
-            isWithinDirectory(action.from, "{tmp}/" + allowed.from) &&
-            isWithinDirectory(action.to, allowed.to)
-          ) {
-            return true;
-          }
-        }
+    const isFirstActionDownload = packageInfo.installer.install[0].action === "download";
+    const isSecondActionExtract = packageInfo.installer.install[1].action === "extract";
+    const areCopiesAu2pkgLike = packageInfo.installer.install.slice(2).every((action) => {
+      if (action.action !== "copy") {
         return false;
-      });
+      }
+      for (const allowed of allowedCopyDestinations) {
+        if (
+          isWithinDirectory(action.from, "{tmp}/" + allowed.from) &&
+          isWithinDirectory(action.to, allowed.to)
+        ) {
+          return true;
+        }
+      }
+      return false;
+    });
 
     if (isFirstActionDownload && isSecondActionExtract && areCopiesAu2pkgLike) {
       return downloadUrl;
     }
   }
 
+  const [downloadAction, copyAction] = packageInfo.installer.install;
   if (
     packageInfo.installer.install.length === 2 &&
-    packageInfo.installer.install[0].action === "download" &&
-    packageInfo.installer.install[1].action === "copy" &&
-    allowedCopyDestinations.some((allowed) =>
-      isWithinDirectory(packageInfo.installer.install[1].to, allowed.to),
-    )
+    downloadAction.action === "download" &&
+    copyAction.action === "copy" &&
+    allowedCopyDestinations.some((allowed) => isWithinDirectory(copyAction.to, allowed.to))
   ) {
     return downloadUrl;
   }

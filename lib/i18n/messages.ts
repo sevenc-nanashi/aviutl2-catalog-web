@@ -135,7 +135,7 @@ export const messages = {
       packageId: "パッケージIDを入力してください。",
       codeHelp: "以下のコードをコピーして、READMEなどに貼り付けてください。",
       badgeUrlHelp: "以下のURLをコピーして、バッジ画像のURLとして使用してください。",
-      pageUrlHelp: "以下のURLにアクセスすると、カタログを開くページに移動します。",
+      pageUrlHelp: "以下のURLにアクセスすると、詳細ページに移動します。",
       preview: "プレビュー：",
       none: "（なし）",
     },
