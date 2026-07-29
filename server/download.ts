@@ -20,21 +20,26 @@ const githubReleasesSchema = z.array(githubReleaseSchema);
 
 type Fetcher = typeof fetch;
 
-function githubHeaders(): HeadersInit {
-  return {
+function githubHeaders(githubToken?: string): HeadersInit {
+  const headers: Record<string, string> = {
     Accept: "application/vnd.github+json",
     "User-Agent": "aviutl2-catalog-web",
     "X-GitHub-Api-Version": "2022-11-28",
   };
+  if (githubToken !== undefined) {
+    headers.Authorization = `Bearer ${githubToken}`;
+  }
+  return headers;
 }
 
 async function fetchGithubRelease(
   source: Extract<InstallerSource, { github: unknown }>["github"],
   fetcher: Fetcher,
+  githubToken?: string,
 ): Promise<z.infer<typeof githubReleaseSchema>> {
   const repositoryApi = `https://api.github.com/repos/${encodeURIComponent(source.owner)}/${encodeURIComponent(source.repo)}/releases`;
   const latestResponse = await fetcher(`${repositoryApi}/latest`, {
-    headers: githubHeaders(),
+    headers: githubHeaders(githubToken),
     cf: {
       cacheEverything: true,
       cacheTtl: 60 * 60,
@@ -48,7 +53,7 @@ async function fetchGithubRelease(
   }
 
   const releasesResponse = await fetcher(`${repositoryApi}?per_page=30`, {
-    headers: githubHeaders(),
+    headers: githubHeaders(githubToken),
     cf: {
       cacheEverything: true,
       cacheTtl: 60 * 60,
@@ -71,8 +76,9 @@ async function fetchGithubRelease(
 async function resolveGithubDownloadUrl(
   source: Extract<InstallerSource, { github: unknown }>["github"],
   fetcher: Fetcher,
+  githubToken?: string,
 ): Promise<string> {
-  const release = await fetchGithubRelease(source, fetcher);
+  const release = await fetchGithubRelease(source, fetcher, githubToken);
   const assetPattern = new RegExp(source.pattern);
   const asset = release.assets.find((candidate) => {
     assetPattern.lastIndex = 0;
@@ -87,6 +93,7 @@ async function resolveGithubDownloadUrl(
 export async function resolvePackageDownloadUrl(
   packageInfo: PackageInfo,
   fetcher: Fetcher = fetch,
+  githubToken?: string,
 ): Promise<string> {
   const source = packageInfo.installer.source;
   if ("direct" in source) {
@@ -101,5 +108,5 @@ export async function resolvePackageDownloadUrl(
     url.searchParams.set("id", source.GoogleDrive.id);
     return url.toString();
   }
-  return resolveGithubDownloadUrl(source.github, fetcher);
+  return resolveGithubDownloadUrl(source.github, fetcher, githubToken);
 }

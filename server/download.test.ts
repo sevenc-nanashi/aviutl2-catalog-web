@@ -89,6 +89,38 @@ test("GitHub最新リリースから正規表現に一致するアセットを�
   );
 });
 
+test("GitHub APIへ環境変数のトークンを送信する", async () => {
+  const packageInfo = createPackageInfo({
+    github: {
+      owner: "example",
+      repo: "package",
+      pattern: "\\.zip$",
+    },
+  });
+  let authorization: string | null = null;
+  const fetcher = (async (_input: string | URL | Request, init?: RequestInit) => {
+    authorization = new Headers(init?.headers).get("Authorization");
+    return new Response(
+      JSON.stringify({
+        assets: [
+          {
+            name: "package.zip",
+            browser_download_url:
+              "https://github.com/example/package/releases/download/v1/package.zip",
+          },
+        ],
+      }),
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+  }) as typeof fetch;
+
+  await resolvePackageDownloadUrl(packageInfo, fetcher, "github-token");
+
+  assert.equal(authorization, "Bearer github-token");
+});
+
 test("一致するGitHubアセットがない場合は失敗する", async () => {
   const packageInfo = createPackageInfo({
     github: {

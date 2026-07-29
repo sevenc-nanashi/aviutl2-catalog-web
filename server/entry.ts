@@ -9,7 +9,11 @@ import { resolvePackageDownloadUrl } from "./download";
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
-const app = new Hono();
+type Bindings = {
+  GITHUB_TOKEN?: string;
+};
+
+const app = new Hono<{ Bindings: Bindings }>();
 
 const rawGithubPathSchema = z.string().min(1);
 const imageExtensionPattern = /\.(?:avif|gif|jpe?g|png|webp)$/i;
@@ -57,7 +61,7 @@ app.get("/api/package/:id/download", async (c) => {
     return c.text(translate(locale, "package.errors.directDownloadUnavailable"), 404);
   }
   try {
-    return c.redirect(await resolvePackageDownloadUrl(packageInfo), 302);
+    return c.redirect(await resolvePackageDownloadUrl(packageInfo, fetch, c.env.GITHUB_TOKEN), 302);
   } catch (error) {
     console.error(`[package:${packageInfo.id}] Failed to resolve download URL`, error);
     return c.text(translate(locale, "package.errors.downloadFailed"), 502);
