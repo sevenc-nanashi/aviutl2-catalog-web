@@ -53,6 +53,9 @@ app.get("/api/package/:id/download", async (c) => {
   if (packageInfo === undefined) {
     return c.text(translate(locale, "package.errors.downloadNotFound"), 404);
   }
+  if ("booth" in packageInfo.installer.source) {
+    return c.text(translate(locale, "package.errors.directDownloadUnavailable"), 404);
+  }
   try {
     return c.redirect(await resolvePackageDownloadUrl(packageInfo), 302);
   } catch (error) {

@@ -26,9 +26,6 @@ const emit = defineEmits<{ openDetail: [] }>();
 const { t } = useI18n({ useScope: "global" });
 
 const detailUrl = computed(() => `/package/${encodeURIComponent(props.packageInfo.id)}`);
-const downloadUrl = computed(
-  () => `/api/package/${encodeURIComponent(props.packageInfo.id)}/download`,
-);
 const directDownload = computed(() => shouldShowDirectDownload(props.packageInfo));
 const thumbnail = computed(() => packageThumbnail(props.packageInfo));
 const thumbnailIcon = computed(() => thumbnailIconByCategory[packageCategory(props.packageInfo)]);
@@ -76,7 +73,7 @@ const updatedDate = computed(() => {
       <div class="card-action">
         <a
           v-if="directDownload"
-          :href="downloadUrl"
+          :href="directDownload"
           class="ui-button ui-button-compact ui-button-primary ui-focus-ring"
           @click.stop
         >

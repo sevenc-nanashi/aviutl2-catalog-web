@@ -12,10 +12,7 @@ const props = defineProps<{
 const { locale, t } = useI18n({ useScope: "global" });
 
 const catalogUrl = computed(() => `aviutl2-catalog://package/${props.packageInfo.id}`);
-const directDownloadUrl = computed(
-  () => `/api/package/${encodeURIComponent(props.packageInfo.id)}/download`,
-);
-const showDirectDownload = computed(() => shouldShowDirectDownload(props.packageInfo));
+const directDownloadUrl = computed(() => shouldShowDirectDownload(props.packageInfo));
 const latestDate = computed(() => {
   const releaseDate = latestReleaseDate(props.packageInfo);
   if (releaseDate === undefined) {
@@ -123,7 +120,7 @@ const packageType = computed(() => {
 
       <section class="action-panel ui-surface-section">
         <a
-          v-if="showDirectDownload"
+          v-if="directDownloadUrl"
           :href="directDownloadUrl"
           class="primary-action ui-button ui-button-primary ui-focus-ring"
         >

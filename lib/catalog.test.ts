@@ -94,6 +94,15 @@ test("ヒーロー画像はサムネイルより詳細画像を優先する", ()
   );
 });
 
-test("直接ダウンロード判定は初期状態で無効", () => {
-  assert.equal(shouldShowDirectDownload(createPackageInfo()), false);
+test("直接ダウンロード可能なパッケージはダウンロード先を返す", () => {
+  assert.equal(
+    shouldShowDirectDownload(createPackageInfo()),
+    "/api/package/example.package/download",
+  );
+});
+
+test("BOOTHから取得するパッケージは直接ダウンロード先を返さない", () => {
+  const packageInfo = createPackageInfo();
+  packageInfo.installer.source = { booth: "https://example.booth.pm/items/123456" };
+  assert.equal(shouldShowDirectDownload(packageInfo), null);
 });

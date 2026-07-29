@@ -73,7 +73,7 @@ function handleSort(event: Event): void {
         <span aria-hidden="true" class="i-lucide-search search-icon" />
         <span class="sr-only">{{ t("home.search.label") }}</span>
         <input
-          type="search"
+          type="text"
           :value="searchQuery"
           :placeholder="t('home.search.placeholder')"
           @input="handleSearch"
@@ -81,7 +81,7 @@ function handleSort(event: Event): void {
         <button
           v-if="searchQuery"
           type="button"
-          class="search-clear ui-icon-button ui-focus-ring"
+          class="search-clear ui-focus-ring"
           :aria-label="t('home.search.clear')"
           @click="emit('update:searchQuery', '')"
         >
@@ -234,11 +234,12 @@ function handleSort(event: Event): void {
 .filter-primary-row {
   flex-wrap: wrap;
   gap: var(--ui-space-3);
+  margin-bottom: var(--ui-space-2);
 }
 
 .search-field {
   position: relative;
-  min-width: 10rem;
+  min-width: 8rem;
   max-width: 42rem;
   flex: 1;
 }
@@ -250,22 +251,56 @@ function handleSort(event: Event): void {
   width: 1.125rem;
   height: 1.125rem;
   color: var(--ui-text-subtle);
+  pointer-events: none;
   transform: translateY(-50%);
 }
 
-.search-field input {
+.search-field input[type="text"] {
   width: 100%;
+  padding-block: var(--ui-space-2);
   padding-left: 2.5rem;
   padding-right: 2.5rem;
+  background: light-dark(rgb(255 255 255 / 0.95), theme("colors.slate.800"));
+  border-color: light-dark(rgb(226 232 240 / 0.8), theme("colors.slate.700"));
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-sm);
+  color: light-dark(theme("colors.slate.900"), theme("colors.slate.100"));
+  font-size: var(--ui-text-sm);
+  outline: none;
+  transition:
+    background-color 150ms ease-out,
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+}
+
+.search-field input[type="text"]::placeholder {
+  color: light-dark(theme("colors.slate.500"), theme("colors.slate.400"));
+}
+
+.search-field input[type="text"]:focus-visible {
+  border-color: var(--ui-primary);
+  box-shadow: 0 0 0 2px var(--ui-focus);
+  outline: none;
 }
 
 .search-clear {
   position: absolute;
   top: 50%;
   right: var(--ui-space-3);
-  width: 1.375rem;
-  height: 1.375rem;
+  padding: 0.125rem;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: light-dark(theme("colors.slate.400"), theme("colors.slate.400"));
   transform: translateY(-50%);
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out;
+}
+
+.search-clear:hover {
+  background: light-dark(theme("colors.slate.200"), theme("colors.slate.700"));
+  color: light-dark(theme("colors.slate.600"), theme("colors.slate.200"));
 }
 
 .search-clear span {

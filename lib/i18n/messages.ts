@@ -79,7 +79,7 @@ export const messages = {
       card: {
         openDetails: "{name} の詳細を開く",
         deprecated: "非推奨",
-        directDownload: "直接ダウンロード",
+        directDownload: "ダウンロード",
         details: "詳細表示",
       },
       empty: {
@@ -119,13 +119,14 @@ export const messages = {
         originalAuthor: "原作者",
         versionUnknown: "不明",
         repository: "配布元ページを開く",
-        directDownload: "直接ダウンロード",
+        directDownload: "ダウンロード",
         openCatalog: "カタログで開く",
       },
       errors: {
         loadFailed: "パッケージ情報を取得できませんでした。",
         notFound: "パッケージ「{id}」は登録されていません。",
         downloadNotFound: "パッケージが見つかりませんでした。",
+        directDownloadUnavailable: "直接ダウンロードを利用できません。",
         downloadFailed: "ダウンロード先を取得できませんでした。",
       },
     },
@@ -225,7 +226,7 @@ export const messages = {
       card: {
         openDetails: "Open details for {name}",
         deprecated: "Deprecated",
-        directDownload: "Direct download",
+        directDownload: "Download",
         details: "View details",
       },
       empty: {
@@ -265,13 +266,14 @@ export const messages = {
         originalAuthor: "Original author",
         versionUnknown: "Unknown",
         repository: "Open package page",
-        directDownload: "Direct download",
+        directDownload: "Download",
         openCatalog: "Open in Catalog",
       },
       errors: {
         loadFailed: "Failed to load the package details.",
         notFound: "Package “{id}” is not registered.",
         downloadNotFound: "Package not found.",
+        directDownloadUnavailable: "Direct download is unavailable.",
         downloadFailed: "Failed to resolve the download URL.",
       },
     },

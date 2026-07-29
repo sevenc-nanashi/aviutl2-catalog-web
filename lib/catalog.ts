@@ -29,9 +29,46 @@ export const installerSourceSchema = z.union([
   z.object({ GoogleDrive: z.object({ id: z.string().min(1) }) }),
 ]);
 
-const installerActionSchema = z.looseObject({
-  action: z.string(),
-});
+const installerActionSchema = z.discriminatedUnion("action", [
+  z.object({
+    action: z.literal("download"),
+  }),
+
+  z.object({
+    action: z.literal("extract"),
+    from: z.string().optional(),
+    to: z.string().optional(),
+  }),
+
+  z.object({
+    action: z.literal("extract_sfx"),
+    from: z.string().optional(),
+    to: z.string().optional(),
+  }),
+
+  z.object({
+    action: z.literal("copy"),
+    from: z.string(),
+    to: z.string(),
+  }),
+
+  z.object({
+    action: z.literal("delete"),
+    path: z.string(),
+  }),
+
+  z.object({
+    action: z.literal("run"),
+    path: z.string(),
+    args: z.array(z.string()),
+    elevate: z.boolean().optional(),
+  }),
+
+  z.object({
+    action: z.literal("run_auo_setup"),
+    path: z.string(),
+  }),
+]);
 
 const installerSchema = z.object({
   source: installerSourceSchema,
@@ -93,7 +130,10 @@ export interface PackagePageData {
   screenshots: string[];
 }
 
-export function findPackage(catalog: PackageInfo[], packageId: string): PackageInfo | undefined {
+export function findPackage(
+  catalog: PackageInfo[],
+  packageId: string,
+): PackageInfo | undefined {
   const normalizedId = packageId.toLowerCase();
   return catalog.find((item) => item.id.toLowerCase() === normalizedId);
 }
@@ -133,7 +173,9 @@ export function collectHeroImage(packageInfo: PackageInfo): string | undefined {
   return toRawGithubProxyUrl(resolveCatalogUrl(thumbnail));
 }
 
-export function latestReleaseDate(packageInfo: PackageInfo): string | undefined {
+export function latestReleaseDate(
+  packageInfo: PackageInfo,
+): string | undefined {
   return packageInfo.version
     .map((version) => version.release_date)
     .sort()
