@@ -118,6 +118,12 @@ export function collectScreenshots(packageInfo: PackageInfo): string[] {
 }
 
 export function collectHeroImage(packageInfo: PackageInfo): string | undefined {
+  const detailImage = packageInfo.images
+    .flatMap((group) => group.infoImg ?? [])
+    .find((source) => source.length > 0);
+  if (detailImage !== undefined) {
+    return toRawGithubProxyUrl(resolveCatalogUrl(detailImage));
+  }
   const thumbnail = packageInfo.images
     .map((group) => group.thumbnail)
     .find((source) => source !== undefined && source.length > 0);

@@ -80,6 +80,20 @@ test("ヒーロー画像は最初のサムネイルを同一オリジンへ書�
   );
 });
 
+test("ヒーロー画像はサムネイルより詳細画像を優先する", () => {
+  const packageInfo = createPackageInfo();
+  packageInfo.images = [
+    {
+      thumbnail: "image/thumbnail.png",
+      infoImg: ["image/detail.png"],
+    },
+  ];
+  assert.equal(
+    collectHeroImage(packageInfo),
+    "/api/raw/Neosku/aviutl2-catalog-data/refs/heads/main/image/detail.png",
+  );
+});
+
 test("直接ダウンロード判定は初期状態で無効", () => {
   assert.equal(shouldShowDirectDownload(createPackageInfo()), false);
 });

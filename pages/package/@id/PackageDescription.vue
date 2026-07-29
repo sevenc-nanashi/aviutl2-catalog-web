@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import "markdown-it-github-alerts/styles/github-colors-light.css";
+import "markdown-it-github-alerts/styles/github-colors-dark-media.css";
+import "markdown-it-github-alerts/styles/github-base.css";
 import { onMounted, ref } from "vue";
 
 defineProps<{
@@ -53,3 +56,17 @@ onMounted(() => {
     v-html="html"
   />
 </template>
+
+<style>
+.package-description .markdown-alert .markdown-alert-title svg[data-is-alert-icon] {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.75rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+</style>

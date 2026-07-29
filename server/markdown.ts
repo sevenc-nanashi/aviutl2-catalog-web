@@ -11,11 +11,6 @@ const DETAILS_OPEN_LINE_RE = /^<details\b[^>]*>\s*$/i;
 const DETAILS_CLOSE_LINE_RE = /^<\/details>\s*$/i;
 const SUMMARY_RE = /^\s*(<summary\b[^>]*>[\s\S]*?<\/summary>)([\s\S]*)$/i;
 
-interface FenceState {
-  marker: "`" | "~";
-  length: number;
-}
-
 const alertIcons = {
   note: '<svg aria-hidden="true" data-is-alert-icon="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>',
   tip: '<svg aria-hidden="true" data-is-alert-icon="true" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M8.7 15.1a7 7 0 1 1 6.6 0c-.8.5-1.3 1.3-1.3 2.2V18h-4v-.7c0-.9-.5-1.7-1.3-2.2Z"/></svg>',
@@ -50,43 +45,15 @@ function getLineText(state: Parameters<RuleBlock>[0], line: number): string {
   return state.src.slice(start, state.eMarks[line]);
 }
 
-function getFenceStart(lineText: string): FenceState | undefined {
-  const match = /^(?<markup>`{3,}|~{3,})(?<params>.*)$/.exec(lineText);
-  if (match?.groups === undefined) {
-    return undefined;
-  }
-  const { markup, params } = match.groups;
-  const marker = markup[0] as FenceState["marker"];
-  if (marker === "`" && params.includes("`")) {
-    return undefined;
-  }
-  return { marker, length: markup.length };
-}
-
-function isFenceEnd(lineText: string, fence: FenceState): boolean {
-  return new RegExp(`^\\${fence.marker}{${fence.length},}\\s*$`).test(lineText);
-}
-
 function findDetailsEndLine(
   state: Parameters<RuleBlock>[0],
   startLine: number,
   endLine: number,
 ): number | undefined {
   let depth = 0;
-  let fence: FenceState | undefined;
 
   for (let line = startLine; line < endLine; line += 1) {
     const lineText = getLineText(state, line);
-    if (fence !== undefined) {
-      if (isFenceEnd(lineText, fence)) {
-        fence = undefined;
-      }
-      continue;
-    }
-    fence = getFenceStart(lineText);
-    if (fence !== undefined) {
-      continue;
-    }
     if (DETAILS_OPEN_LINE_RE.test(lineText)) {
       depth += 1;
     } else if (DETAILS_CLOSE_LINE_RE.test(lineText)) {

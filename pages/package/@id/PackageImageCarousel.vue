@@ -70,22 +70,15 @@ function handleKeydown(event: KeyboardEvent): void {
     @keydown="handleKeydown"
   >
     <div ref="carouselElement" class="screenshot-grid" @scroll.passive="updateActiveIndex">
-      <a
+      <img
         v-for="(image, index) in images"
         :key="image"
         class="screenshot-frame"
-        :href="image"
-        target="_blank"
-        rel="noopener noreferrer"
-        :aria-label="`${packageName}のスクリーンショット ${index + 1} を開く`"
-      >
-        <img
-          :src="image"
-          :alt="`${packageName}のスクリーンショット ${index + 1}`"
-          loading="lazy"
-          decoding="async"
-        />
-      </a>
+        :src="image"
+        :alt="`${packageName}のスクリーンショット ${index + 1}`"
+        loading="lazy"
+        decoding="async"
+      />
     </div>
 
     <button

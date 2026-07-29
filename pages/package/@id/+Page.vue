@@ -157,53 +157,60 @@ const packageInfo = computed(() => data.packageInfo);
 
 .deprecation {
   margin-top: var(--space-sm);
-  padding: var(--space-lg);
   display: grid;
   gap: var(--space-sm);
-  background: light-dark(theme("colors.amber.50"), theme("colors.amber.950"));
-  border: 1px solid light-dark(theme("colors.amber.200"), theme("colors.amber.800"));
-  border-radius: var(--ui-radius-xl);
   color: light-dark(theme("colors.amber.800"), theme("colors.amber.200"));
   font-size: var(--ui-text-sm);
   line-height: 1.6;
 }
 
+.deprecation h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: light-dark(theme("colors.amber.600"), theme("colors.amber.300"));
+  font-weight: 700;
+}
+
+.deprecation h3 svg {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.deprecation blockquote {
+  padding: var(--space-md);
+  background: light-dark(theme("colors.amber.50"), rgb(120 53 15 / 0.3));
+  border: 1px solid light-dark(theme("colors.amber.200"), theme("colors.amber.800"));
+  border-radius: var(--ui-radius-lg);
+}
+
 .image-carousel {
   position: relative;
   min-width: 0;
-  overflow: hidden;
-  border-radius: var(--ui-radius-2xl);
 }
 
 .screenshot-grid {
   display: flex;
   gap: var(--space-lg);
   overflow-x: auto;
-  scrollbar-width: none;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
-}
-
-.screenshot-grid::-webkit-scrollbar {
-  display: none;
 }
 
 .screenshot-frame {
   width: 100%;
   flex: 0 0 100%;
-  overflow: hidden;
-  display: grid;
-  place-items: center;
-  background: var(--ui-surface);
+  max-height: 34rem;
   border: 1px solid var(--ui-border);
   border-radius: var(--ui-radius-2xl);
-  scroll-snap-align: center;
-}
-
-.screenshot-frame img {
-  width: 100%;
-  max-height: 34rem;
   object-fit: contain;
+  scroll-snap-align: center;
 }
 
 .carousel-button {
@@ -218,14 +225,11 @@ const packageInfo = computed(() => data.packageInfo);
   box-shadow: 0 4px 12px rgb(15 23 42 / 0.18);
   color: var(--ui-text);
   transform: translateY(-50%);
-  transition:
-    background-color 150ms ease-out,
-    transform 150ms ease-out;
+  transition: background-color 150ms ease-out;
 }
 
 .carousel-button:hover {
   background: light-dark(rgb(255 255 255), rgb(15 23 42));
-  transform: translateY(-50%) scale(1.05);
 }
 
 .carousel-button svg {
@@ -263,14 +267,11 @@ const packageInfo = computed(() => data.packageInfo);
   height: 0.375rem;
   background: rgb(255 255 255 / 0.4);
   border-radius: 999px;
-  transition:
-    background-color 150ms ease-out,
-    transform 150ms ease-out;
+  transition: background-color 150ms ease-out;
 }
 
 .carousel-indicator.active {
   background: white;
-  transform: scale(1.25);
 }
 
 .dependency-list {
@@ -426,8 +427,8 @@ const packageInfo = computed(() => data.packageInfo);
 
 :is(.package-description h1) {
   margin-block: 0 0.9em;
-  font-size: 2.25em;
-  letter-spacing: -0.025em;
+  font-size: 1.625rem;
+  line-height: 2.125rem;
 }
 
 :is(.package-description h2) {
@@ -585,64 +586,6 @@ const packageInfo = computed(() => data.packageInfo);
   display: block;
   margin: 0;
   border-radius: 0;
-}
-
-:is(.package-description .markdown-alert) {
-  --alert-color: var(--ui-primary-text);
-  margin-block: var(--space-lg);
-  padding: var(--space-lg);
-  background: color-mix(in srgb, var(--alert-color) 8%, var(--ui-surface));
-  border: 1px solid color-mix(in srgb, var(--alert-color) 32%, var(--ui-border));
-  border-radius: var(--ui-radius-xl);
-  color: var(--ui-text-muted);
-}
-
-:is(.package-description .markdown-alert > :first-child) {
-  margin-top: 0;
-}
-
-:is(.package-description .markdown-alert > :last-child) {
-  margin-bottom: 0;
-}
-
-:is(.package-description .markdown-alert-title) {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  color: var(--alert-color);
-  font-weight: 500;
-  line-height: 1;
-}
-
-:is(.package-description .markdown-alert-title svg) {
-  width: 1rem;
-  height: 1rem;
-  flex: none;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.8;
-}
-
-:is(.package-description .markdown-alert-note) {
-  --alert-color: light-dark(theme("colors.blue.700"), theme("colors.blue.400"));
-}
-
-:is(.package-description .markdown-alert-tip) {
-  --alert-color: light-dark(theme("colors.emerald.700"), theme("colors.emerald.400"));
-}
-
-:is(.package-description .markdown-alert-important) {
-  --alert-color: light-dark(theme("colors.violet.700"), theme("colors.violet.400"));
-}
-
-:is(.package-description .markdown-alert-warning) {
-  --alert-color: light-dark(theme("colors.amber.700"), theme("colors.amber.400"));
-}
-
-:is(.package-description .markdown-alert-caution) {
-  --alert-color: light-dark(theme("colors.red.700"), theme("colors.red.400"));
 }
 
 @media (min-width: 64rem) {
