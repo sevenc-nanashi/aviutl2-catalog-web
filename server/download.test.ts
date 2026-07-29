@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import * as v from "valibot";
 import { packageInfoSchema, type InstallerSource, type PackageInfo } from "../lib/catalog.ts";
 import { resolvePackageDownloadUrl } from "./download.ts";
 
 function createPackageInfo(source: InstallerSource): PackageInfo {
-  return packageInfoSchema.parse({
+  return v.parse(packageInfoSchema, {
     id: "example.package",
     name: "Example Package",
     type: "プラグイン",

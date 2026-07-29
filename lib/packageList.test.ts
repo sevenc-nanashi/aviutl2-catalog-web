@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import * as v from "valibot";
 import { packageInfoSchema, type PackageInfo } from "./catalog.ts";
 import {
   filterAndSortPackages,
@@ -9,7 +10,7 @@ import {
 } from "./packageList.ts";
 
 function createPackage(overrides: Partial<PackageInfo> = {}): PackageInfo {
-  return packageInfoSchema.parse({
+  return v.parse(packageInfoSchema, {
     id: "example",
     name: "Example",
     type: "汎用プラグイン",
@@ -80,12 +81,12 @@ test("追加日順は元インデックスが大きい要素を先にする", ()
 
 test("履歴状態はスキーマで検証する", () => {
   assert.equal(
-    packageListHistoryStateSchema.safeParse({
+    v.safeParse(packageListHistoryStateSchema, {
       ...defaultState,
       tagsExpanded: true,
       scrollY: 120,
     }).success,
     true,
   );
-  assert.equal(packageListHistoryStateSchema.safeParse({ sortOrder: "invalid" }).success, false);
+  assert.equal(v.safeParse(packageListHistoryStateSchema, { sortOrder: "invalid" }).success, false);
 });

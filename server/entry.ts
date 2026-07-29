@@ -2,7 +2,7 @@ import icon from "./icon.svg?raw";
 import vike from "@vikejs/hono";
 import { Hono } from "hono";
 import { showRoutes } from "hono/dev";
-import { z } from "zod";
+import * as v from "valibot";
 import { resolveLocale, translate } from "../lib/i18n/index.ts";
 import { fetchCatalog, fetchPackageInfo } from "./catalog";
 import { resolvePackageDownloadUrl } from "./download";
@@ -15,7 +15,7 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
-const rawGithubPathSchema = z.string().min(1);
+const rawGithubPathSchema = v.pipe(v.string(), v.minLength(1));
 const imageExtensionPattern = /\.(?:avif|gif|jpe?g|png|webp)$/i;
 const rawGithubRoutePrefix = "/api/raw/";
 
@@ -70,7 +70,10 @@ app.get("/api/package/:id/download", async (c) => {
 
 app.get("/api/raw/*", async (c) => {
   const requestUrl = new URL(c.req.url);
-  const rawPath = rawGithubPathSchema.parse(requestUrl.pathname.slice(rawGithubRoutePrefix.length));
+  const rawPath = v.parse(
+    rawGithubPathSchema,
+    requestUrl.pathname.slice(rawGithubRoutePrefix.length),
+  );
   const upstreamUrl = new URL("https://raw.githubusercontent.com/");
   upstreamUrl.pathname = `/${rawPath.replace(/^\/+/, "")}`;
   upstreamUrl.search = requestUrl.search;

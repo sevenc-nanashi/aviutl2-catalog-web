@@ -1,127 +1,127 @@
-import { z } from "zod";
+import * as v from "valibot";
 
 export const RAW_GITHUB_ORIGIN = "https://raw.githubusercontent.com";
 export const CATALOG_INDEX_URL = `${RAW_GITHUB_ORIGIN}/Neosku/aviutl2-catalog-data/refs/heads/main/index.json`;
 export const CATALOG_BASE_URL = `${RAW_GITHUB_ORIGIN}/Neosku/aviutl2-catalog-data/refs/heads/main/`;
 
-const copyrightSchema = z.object({
-  years: z.string(),
-  holder: z.string(),
+const copyrightSchema = v.object({
+  years: v.string(),
+  holder: v.string(),
 });
 
-const licenseSchema = z.object({
-  type: z.string(),
-  isCustom: z.boolean(),
-  copyrights: z.array(copyrightSchema),
-  licenseBody: z.string().nullable(),
+const licenseSchema = v.object({
+  type: v.string(),
+  isCustom: v.boolean(),
+  copyrights: v.array(copyrightSchema),
+  licenseBody: v.nullable(v.string()),
 });
 
-const githubSourceSchema = z.object({
-  owner: z.string(),
-  repo: z.string(),
-  pattern: z.string(),
+const githubSourceSchema = v.object({
+  owner: v.string(),
+  repo: v.string(),
+  pattern: v.string(),
 });
 
-export const installerSourceSchema = z.union([
-  z.object({ direct: z.url() }),
-  z.object({ booth: z.url() }),
-  z.object({ github: githubSourceSchema }),
-  z.object({ GoogleDrive: z.object({ id: z.string().min(1) }) }),
+export const installerSourceSchema = v.union([
+  v.object({ direct: v.pipe(v.string(), v.url()) }),
+  v.object({ booth: v.pipe(v.string(), v.url()) }),
+  v.object({ github: githubSourceSchema }),
+  v.object({ GoogleDrive: v.object({ id: v.pipe(v.string(), v.minLength(1)) }) }),
 ]);
 
-const installerActionSchema = z.discriminatedUnion("action", [
-  z.object({
-    action: z.literal("download"),
+const installerActionSchema = v.variant("action", [
+  v.object({
+    action: v.literal("download"),
   }),
 
-  z.object({
-    action: z.literal("extract"),
-    from: z.string().optional(),
-    to: z.string().optional(),
+  v.object({
+    action: v.literal("extract"),
+    from: v.optional(v.string()),
+    to: v.optional(v.string()),
   }),
 
-  z.object({
-    action: z.literal("extract_sfx"),
-    from: z.string().optional(),
-    to: z.string().optional(),
+  v.object({
+    action: v.literal("extract_sfx"),
+    from: v.optional(v.string()),
+    to: v.optional(v.string()),
   }),
 
-  z.object({
-    action: z.literal("copy"),
-    from: z.string(),
-    to: z.string(),
+  v.object({
+    action: v.literal("copy"),
+    from: v.string(),
+    to: v.string(),
   }),
 
-  z.object({
-    action: z.literal("delete"),
-    path: z.string(),
+  v.object({
+    action: v.literal("delete"),
+    path: v.string(),
   }),
 
-  z.object({
-    action: z.literal("run"),
-    path: z.string(),
-    args: z.array(z.string()),
-    elevate: z.boolean().optional(),
+  v.object({
+    action: v.literal("run"),
+    path: v.string(),
+    args: v.array(v.string()),
+    elevate: v.optional(v.boolean()),
   }),
 
-  z.object({
-    action: z.literal("run_auo_setup"),
-    path: z.string(),
+  v.object({
+    action: v.literal("run_auo_setup"),
+    path: v.string(),
   }),
 ]);
 
-const installerSchema = z.object({
+const installerSchema = v.object({
   source: installerSourceSchema,
-  install: z.array(installerActionSchema),
-  uninstall: z.array(installerActionSchema),
+  install: v.array(installerActionSchema),
+  uninstall: v.array(installerActionSchema),
 });
 
-const versionSchema = z.object({
-  version: z.string(),
-  release_date: z.iso.date(),
-  file: z.array(
-    z.object({
-      path: z.string(),
-      XXH3_128: z.string(),
+const versionSchema = v.object({
+  version: v.string(),
+  release_date: v.pipe(v.string(), v.isoDate()),
+  file: v.array(
+    v.object({
+      path: v.string(),
+      XXH3_128: v.string(),
     }),
   ),
 });
 
-const imageSchema = z.object({
-  thumbnail: z.string().optional(),
-  infoImg: z.array(z.string()).optional(),
+const imageSchema = v.object({
+  thumbnail: v.optional(v.string()),
+  infoImg: v.optional(v.array(v.string())),
 });
 
-export const packageInfoSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  type: z.string(),
-  summary: z.string(),
-  description: z.string(),
-  author: z.string(),
-  originalAuthor: z.string().optional(),
-  repoURL: z.string(),
-  "latest-version": z.string(),
-  popularity: z.number().default(0),
-  trend: z.number().default(0),
-  licenses: z.array(licenseSchema),
-  niconiCommonsId: z.string().nullable().optional(),
-  tags: z.array(z.string()),
-  dependencies: z.array(z.string()),
-  images: z.array(imageSchema),
+export const packageInfoSchema = v.object({
+  id: v.string(),
+  name: v.string(),
+  type: v.string(),
+  summary: v.string(),
+  description: v.string(),
+  author: v.string(),
+  originalAuthor: v.optional(v.string()),
+  repoURL: v.string(),
+  "latest-version": v.string(),
+  popularity: v.optional(v.number(), 0),
+  trend: v.optional(v.number(), 0),
+  licenses: v.array(licenseSchema),
+  niconiCommonsId: v.optional(v.nullable(v.string())),
+  tags: v.array(v.string()),
+  dependencies: v.array(v.string()),
+  images: v.array(imageSchema),
   installer: installerSchema,
-  version: z.array(versionSchema),
-  deprecation: z
-    .object({
-      message: z.string(),
-    })
-    .optional(),
+  version: v.array(versionSchema),
+  deprecation: v.optional(
+    v.object({
+      message: v.string(),
+    }),
+  ),
 });
 
-export const catalogSchema = z.array(packageInfoSchema);
+export const catalogSchema = v.array(packageInfoSchema);
 
-export type PackageInfo = z.infer<typeof packageInfoSchema>;
-export type InstallerSource = z.infer<typeof installerSourceSchema>;
+export type PackageInfo = v.InferOutput<typeof packageInfoSchema>;
+export type InstallerSource = v.InferOutput<typeof installerSourceSchema>;
 
 export interface PackagePageData {
   packageInfo: PackageInfo;
@@ -130,10 +130,7 @@ export interface PackagePageData {
   screenshots: string[];
 }
 
-export function findPackage(
-  catalog: PackageInfo[],
-  packageId: string,
-): PackageInfo | undefined {
+export function findPackage(catalog: PackageInfo[], packageId: string): PackageInfo | undefined {
   const normalizedId = packageId.toLowerCase();
   return catalog.find((item) => item.id.toLowerCase() === normalizedId);
 }
@@ -173,9 +170,7 @@ export function collectHeroImage(packageInfo: PackageInfo): string | undefined {
   return toRawGithubProxyUrl(resolveCatalogUrl(thumbnail));
 }
 
-export function latestReleaseDate(
-  packageInfo: PackageInfo,
-): string | undefined {
+export function latestReleaseDate(packageInfo: PackageInfo): string | undefined {
   return packageInfo.version
     .map((version) => version.release_date)
     .sort()

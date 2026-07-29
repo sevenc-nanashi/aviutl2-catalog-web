@@ -45,6 +45,7 @@
 
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
+import * as v from "valibot";
 import { localeCookie, supportedLocaleSchema } from "../lib/i18n/index.ts";
 import "@unocss/reset/tailwind-v4.css";
 import "@fontsource/noto-sans-jp/400.css";
@@ -59,7 +60,7 @@ function changeLocale(event: Event): void {
   if (!(event.target instanceof HTMLSelectElement)) {
     throw new Error("Locale selector target is not a select element");
   }
-  const nextLocale = supportedLocaleSchema.parse(event.target.value);
+  const nextLocale = v.parse(supportedLocaleSchema, event.target.value);
   document.cookie = localeCookie(nextLocale, window.location.protocol === "https:");
   window.location.reload();
 }

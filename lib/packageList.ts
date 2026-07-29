@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as v from "valibot";
 import {
   latestReleaseDate,
   resolveCatalogUrl,
@@ -18,13 +18,13 @@ export const packageCategories = [
   { key: "other", translationKey: "other" },
 ] as const;
 
-const categorySchema = z.enum(packageCategories.map(({ key }) => key));
-const deprecationSchema = z.enum(["active", "deprecated", "all"]);
-const sortSchema = z.enum(["popularity_desc", "trend_desc", "added_desc", "updated_desc"]);
+const categorySchema = v.picklist(packageCategories.map(({ key }) => key));
+const deprecationSchema = v.picklist(["active", "deprecated", "all"]);
+const sortSchema = v.picklist(["popularity_desc", "trend_desc", "added_desc", "updated_desc"]);
 
-export type PackageCategory = z.infer<typeof categorySchema>;
-export type PackageDeprecationFilter = z.infer<typeof deprecationSchema>;
-export type PackageSortOrder = z.infer<typeof sortSchema>;
+export type PackageCategory = v.InferOutput<typeof categorySchema>;
+export type PackageDeprecationFilter = v.InferOutput<typeof deprecationSchema>;
+export type PackageSortOrder = v.InferOutput<typeof sortSchema>;
 
 export function packageCategoryTranslationKey(category: PackageCategory): string {
   const definition = packageCategories.find(({ key }) => key === category);
@@ -39,17 +39,17 @@ export interface PackageListItem {
   catalogIndex: number;
 }
 
-export const packageListHistoryStateSchema = z.object({
-  searchQuery: z.string(),
+export const packageListHistoryStateSchema = v.object({
+  searchQuery: v.string(),
   selectedCategory: categorySchema,
-  selectedTags: z.array(z.string()),
+  selectedTags: v.array(v.string()),
   deprecationFilter: deprecationSchema,
   sortOrder: sortSchema,
-  tagsExpanded: z.boolean(),
-  scrollY: z.number().nonnegative(),
+  tagsExpanded: v.boolean(),
+  scrollY: v.pipe(v.number(), v.minValue(0)),
 });
 
-export type PackageListHistoryState = z.infer<typeof packageListHistoryStateSchema>;
+export type PackageListHistoryState = v.InferOutput<typeof packageListHistoryStateSchema>;
 
 const primaryCategoryByType = new Map<string, Exclude<PackageCategory, "all">>([
   ["本体", "core"],

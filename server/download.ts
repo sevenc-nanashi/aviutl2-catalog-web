@@ -1,22 +1,24 @@
-import { z } from "zod";
+import * as v from "valibot";
 import type { InstallerSource, PackageInfo } from "../lib/catalog";
 
-const httpsUrlSchema = z
-  .url()
-  .refine((url) => new URL(url).protocol === "https:", "Download URL must use HTTPS");
+const httpsUrlSchema = v.pipe(
+  v.string(),
+  v.url(),
+  v.check((url) => new URL(url).protocol === "https:", "Download URL must use HTTPS"),
+);
 
-const githubAssetSchema = z.object({
-  name: z.string(),
+const githubAssetSchema = v.object({
+  name: v.string(),
   browser_download_url: httpsUrlSchema,
 });
 
-const githubReleaseSchema = z.object({
-  assets: z.array(githubAssetSchema),
-  published_at: z.string().nullable().optional(),
-  created_at: z.string().nullable().optional(),
+const githubReleaseSchema = v.object({
+  assets: v.array(githubAssetSchema),
+  published_at: v.optional(v.nullable(v.string())),
+  created_at: v.optional(v.nullable(v.string())),
 });
 
-const githubReleasesSchema = z.array(githubReleaseSchema);
+const githubReleasesSchema = v.array(githubReleaseSchema);
 
 type Fetcher = typeof fetch;
 
@@ -36,7 +38,7 @@ async function fetchGithubRelease(
   source: Extract<InstallerSource, { github: unknown }>["github"],
   fetcher: Fetcher,
   githubToken?: string,
-): Promise<z.infer<typeof githubReleaseSchema>> {
+): Promise<v.InferOutput<typeof githubReleaseSchema>> {
   const repositoryApi = `https://api.github.com/repos/${encodeURIComponent(source.owner)}/${encodeURIComponent(source.repo)}/releases`;
   const latestResponse = await fetcher(`${repositoryApi}/latest`, {
     headers: githubHeaders(githubToken),
@@ -46,7 +48,7 @@ async function fetchGithubRelease(
     },
   });
   if (latestResponse.ok) {
-    return githubReleaseSchema.parse(await latestResponse.json());
+    return v.parse(githubReleaseSchema, await latestResponse.json());
   }
   if (latestResponse.status !== 404) {
     throw new Error(`GitHub latest release request failed: HTTP ${latestResponse.status}`);
@@ -62,7 +64,7 @@ async function fetchGithubRelease(
   if (!releasesResponse.ok) {
     throw new Error(`GitHub releases request failed: HTTP ${releasesResponse.status}`);
   }
-  const releases = githubReleasesSchema.parse(await releasesResponse.json());
+  const releases = v.parse(githubReleasesSchema, await releasesResponse.json());
   if (releases.length === 0) {
     throw new Error(`GitHub release is undefined`);
   }
@@ -97,10 +99,10 @@ export async function resolvePackageDownloadUrl(
 ): Promise<string> {
   const source = packageInfo.installer.source;
   if ("direct" in source) {
-    return httpsUrlSchema.parse(source.direct);
+    return v.parse(httpsUrlSchema, source.direct);
   }
   if ("booth" in source) {
-    return httpsUrlSchema.parse(source.booth);
+    return v.parse(httpsUrlSchema, source.booth);
   }
   if ("GoogleDrive" in source) {
     const url = new URL("https://drive.google.com/uc");

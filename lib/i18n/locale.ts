@@ -1,7 +1,7 @@
-import { z } from "zod";
+import * as v from "valibot";
 
-export const supportedLocaleSchema = z.enum(["ja", "en"]);
-export type SupportedLocale = z.infer<typeof supportedLocaleSchema>;
+export const supportedLocaleSchema = v.picklist(["ja", "en"]);
+export type SupportedLocale = v.InferOutput<typeof supportedLocaleSchema>;
 
 export const localeCookieName = "aviutl2-catalog-locale";
 
@@ -35,22 +35,24 @@ function cookieValue(cookieHeader: string | undefined, name: string): string | u
 }
 
 export function normalizeLocale(value: unknown): SupportedLocale {
-  const parsed = z.string().trim().toLowerCase().safeParse(value);
+  const parsed = v.safeParse(v.pipe(v.string(), v.trim(), v.toLowerCase()), value);
   if (!parsed.success) {
     return "ja";
   }
-  const language = parsed.data.split("-")[0];
-  return supportedLocaleSchema.safeParse(language).data ?? "ja";
+  const language = parsed.output.split("-")[0];
+  const locale = v.safeParse(supportedLocaleSchema, language);
+  return locale.success ? locale.output : "ja";
 }
 
 export function resolveLocale(
   headers: Headers | Record<string, string> | null | undefined,
 ): SupportedLocale {
-  const cookieLocale = supportedLocaleSchema.safeParse(
+  const cookieLocale = v.safeParse(
+    supportedLocaleSchema,
     cookieValue(headerValue(headers, "cookie"), localeCookieName),
   );
   if (cookieLocale.success) {
-    return cookieLocale.data;
+    return cookieLocale.output;
   }
 
   const acceptLanguage = headerValue(headers, "accept-language");
@@ -69,9 +71,9 @@ export function resolveLocale(
 
   for (const { language } of preferredLanguages) {
     const normalized = language.trim().toLowerCase().split("-")[0];
-    const parsed = supportedLocaleSchema.safeParse(normalized);
+    const parsed = v.safeParse(supportedLocaleSchema, normalized);
     if (parsed.success) {
-      return parsed.data;
+      return parsed.output;
     }
   }
   return "ja";

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import * as v from "valibot";
 import {
   collectHeroImage,
   findPackage,
@@ -11,7 +12,7 @@ import {
 import { shouldShowDirectDownload } from "./packageDownload.ts";
 
 function createPackageInfo(): PackageInfo {
-  return packageInfoSchema.parse({
+  return v.parse(packageInfoSchema, {
     id: "example.package",
     name: "Example Package",
     type: "プラグイン",

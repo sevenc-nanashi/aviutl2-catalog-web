@@ -8,6 +8,7 @@ import {
   type PackagePageData,
   resolveCatalogUrl,
 } from "../lib/catalog";
+import * as v from "valibot";
 import type { SupportedLocale } from "../lib/i18n/index.ts";
 import { renderPackageMarkdown } from "./markdown";
 
@@ -23,7 +24,7 @@ export async function fetchCatalog(): Promise<PackageInfo[]> {
   if (!response.ok) {
     throw new Error(`Catalog request failed: HTTP ${response.status}`);
   }
-  return catalogSchema.parse(await response.json());
+  return v.parse(catalogSchema, await response.json());
 }
 
 export async function fetchPackageInfo(packageId: string): Promise<PackageInfo | undefined> {

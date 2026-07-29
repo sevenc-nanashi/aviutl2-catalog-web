@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from "vue";
 import { useData } from "vike-vue/useData";
-import { z } from "zod";
+import * as v from "valibot";
 import { useI18n } from "vue-i18n";
 import {
   filterAndSortPackages,
@@ -17,11 +17,9 @@ import PackageListCard from "./PackageListCard.vue";
 import PackageListFilters from "./PackageListFilters.vue";
 import type { Data } from "./+data";
 
-const historyEnvelopeSchema = z
-  .object({
-    aviutl2CatalogPackageList: packageListHistoryStateSchema.optional(),
-  })
-  .passthrough();
+const historyEnvelopeSchema = v.looseObject({
+  aviutl2CatalogPackageList: v.optional(packageListHistoryStateSchema),
+});
 
 const data = useData<Data>();
 const { t } = useI18n({ useScope: "global" });
@@ -76,8 +74,8 @@ function currentHistoryState(): PackageListHistoryState {
 }
 
 function saveHistoryState(): void {
-  const parsedHistory = historyEnvelopeSchema.safeParse(window.history.state);
-  const historyState = parsedHistory.success ? parsedHistory.data : {};
+  const parsedHistory = v.safeParse(historyEnvelopeSchema, window.history.state);
+  const historyState = parsedHistory.success ? parsedHistory.output : {};
   window.history.replaceState(
     {
       ...historyState,
@@ -87,18 +85,18 @@ function saveHistoryState(): void {
   );
 }
 
-function consumeHistoryState(historyState: z.infer<typeof historyEnvelopeSchema>): void {
+function consumeHistoryState(historyState: v.InferOutput<typeof historyEnvelopeSchema>): void {
   const nextHistoryState = { ...historyState };
   delete nextHistoryState.aviutl2CatalogPackageList;
   window.history.replaceState(nextHistoryState, "");
 }
 
 onMounted(() => {
-  const parsedHistory = historyEnvelopeSchema.safeParse(window.history.state);
+  const parsedHistory = v.safeParse(historyEnvelopeSchema, window.history.state);
   if (!parsedHistory.success) {
     return;
   }
-  const savedState = parsedHistory.data.aviutl2CatalogPackageList;
+  const savedState = parsedHistory.output.aviutl2CatalogPackageList;
   if (savedState === undefined) {
     return;
   }
@@ -108,7 +106,7 @@ onMounted(() => {
   deprecationFilter.value = savedState.deprecationFilter;
   sortOrder.value = savedState.sortOrder;
   tagsExpanded.value = savedState.tagsExpanded;
-  consumeHistoryState(parsedHistory.data);
+  consumeHistoryState(parsedHistory.output);
   void nextTick(() => {
     window.scrollTo({ top: savedState.scrollY, behavior: "instant" });
   });
