@@ -19,7 +19,6 @@ body {
   gap: var(--ui-space-4);
   background: color-mix(in srgb, var(--ui-surface) 80%, transparent);
   border-bottom: 1px solid var(--ui-border);
-  font-size: var(--ui-text-2xl);
   font-weight: 700;
 }
 

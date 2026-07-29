@@ -2,7 +2,7 @@
 
 <template>
   <header class="site-header">
-    <a href="/" class="ui-focus-ring">{{ t("common.appName") }}</a>
+    <a href="/" class="ui-focus-ring text-2xl">{{ t("common.appName") }}</a>
     <div class="header-actions">
       <nav :aria-label="t('common.navigation.main')">
         <a href="/" class="ui-focus-ring">{{ t("common.navigation.packages") }}</a>
