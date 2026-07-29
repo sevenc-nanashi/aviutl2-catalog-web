@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { latestReleaseDate, type PackageInfo } from "../../lib/catalog";
-import { packageCategory, packageThumbnail, type PackageCategory } from "../../lib/packageList";
+import {
+  packageCategory,
+  packageThumbnail,
+  packageTypeTranslationKey,
+  type PackageCategory,
+} from "../../lib/packageList";
 import { shouldShowDirectDownload } from "../../lib/packageDownload";
 
 const thumbnailIconByCategory = {
@@ -17,6 +23,7 @@ const thumbnailIconByCategory = {
 
 const props = defineProps<{ packageInfo: PackageInfo }>();
 const emit = defineEmits<{ openDetail: [] }>();
+const { t } = useI18n({ useScope: "global" });
 
 const detailUrl = computed(() => `/package/${encodeURIComponent(props.packageInfo.id)}`);
 const downloadUrl = computed(
@@ -25,6 +32,13 @@ const downloadUrl = computed(
 const directDownload = computed(() => shouldShowDirectDownload(props.packageInfo));
 const thumbnail = computed(() => packageThumbnail(props.packageInfo));
 const thumbnailIcon = computed(() => thumbnailIconByCategory[packageCategory(props.packageInfo)]);
+const packageType = computed(() => {
+  const translationKey = packageTypeTranslationKey(props.packageInfo);
+  if (translationKey === undefined) {
+    return props.packageInfo.type || t("common.packageTypes.other");
+  }
+  return t(`common.packageTypes.${translationKey}`);
+});
 const updatedDate = computed(() => {
   const date = latestReleaseDate(props.packageInfo);
   return date === undefined ? "?" : date.replaceAll("-", "/");
@@ -32,16 +46,18 @@ const updatedDate = computed(() => {
 </script>
 
 <template>
-  <article class="package-card">
+  <article class="package-card ui-interactive-surface">
     <a
       :href="detailUrl"
       class="card-main-link ui-focus-ring"
-      :aria-label="`${packageInfo.name}の詳細を表示`"
+      :aria-label="t('home.card.openDetails', { name: packageInfo.name })"
       @click="emit('openDetail')"
     />
     <div class="card-body">
       <h2 :class="{ deprecated: packageInfo.deprecation }">{{ packageInfo.name }}</h2>
-      <span v-if="packageInfo.deprecation" class="deprecated-chip">非推奨</span>
+      <span v-if="packageInfo.deprecation" class="deprecated-chip">{{
+        t("home.card.deprecated")
+      }}</span>
       <div class="card-meta">
         <span>
           <span aria-hidden="true" class="i-lucide-user meta-icon" />
@@ -61,14 +77,19 @@ const updatedDate = computed(() => {
         <a
           v-if="directDownload"
           :href="downloadUrl"
-          class="download-action ui-focus-ring"
+          class="ui-button ui-button-compact ui-button-primary ui-focus-ring"
           @click.stop
         >
           <span aria-hidden="true" class="i-lucide-download action-icon" />
-          直接ダウンロード
+          {{ t("home.card.directDownload") }}
         </a>
-        <a v-else :href="detailUrl" class="detail-action ui-focus-ring" @click="emit('openDetail')">
-          詳細表示
+        <a
+          v-else
+          :href="detailUrl"
+          class="ui-button ui-button-compact ui-button-neutral-primary ui-focus-ring"
+          @click="emit('openDetail')"
+        >
+          {{ t("home.card.details") }}
         </a>
       </div>
     </div>
@@ -79,7 +100,7 @@ const updatedDate = computed(() => {
           <span :class="thumbnailIcon" class="thumbnail-icon" />
         </div>
       </div>
-      <span>{{ packageInfo.type || "その他" }}</span>
+      <span>{{ packageType }}</span>
     </div>
   </article>
 </template>
@@ -91,19 +112,6 @@ const updatedDate = computed(() => {
   height: 13rem;
   overflow: hidden;
   display: flex;
-  background: var(--ui-surface);
-  border: 1px solid var(--ui-border);
-  border-radius: var(--ui-radius-2xl);
-  transition:
-    border-color 300ms ease-out,
-    box-shadow 300ms ease-out,
-    transform 300ms ease-out;
-}
-
-.package-card:hover {
-  border-color: var(--ui-primary-border);
-  box-shadow: 0 12px 30px rgb(15 23 42 / 0.09);
-  transform: translateY(-2px);
 }
 
 .card-main-link {
@@ -211,40 +219,6 @@ const updatedDate = computed(() => {
 
 .card-action a {
   min-width: 8.75rem;
-  min-height: 2.25rem;
-  padding-inline: var(--ui-space-3);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--ui-space-2);
-  border-radius: var(--ui-radius-lg);
-  font-size: var(--ui-text-xs);
-  font-weight: 700;
-}
-
-.download-action {
-  background: var(--ui-primary);
-  color: white;
-}
-
-.detail-action {
-  background: light-dark(theme("colors.slate.500"), theme("colors.slate.200"));
-  color: light-dark(theme("colors.slate.50"), theme("colors.slate.900"));
-  box-shadow: 0 4px 12px rgb(15 23 42 / 0.16);
-  transition:
-    background-color 180ms ease-out,
-    box-shadow 180ms ease-out,
-    transform 180ms ease-out;
-}
-
-.detail-action:hover {
-  background: light-dark(theme("colors.slate.600"), theme("colors.slate.300"));
-  box-shadow: 0 6px 16px rgb(15 23 42 / 0.2);
-}
-
-.detail-action:active {
-  box-shadow: var(--ui-shadow-sm);
-  transform: scale(0.98);
 }
 
 .card-thumbnail {

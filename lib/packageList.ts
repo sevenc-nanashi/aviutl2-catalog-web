@@ -7,15 +7,15 @@ import {
 } from "./catalog.ts";
 
 export const packageCategories = [
-  { key: "all", label: "すべて" },
-  { key: "core", label: "本体" },
-  { key: "mod", label: "MOD" },
-  { key: "input-plugin", label: "入力プラグイン" },
-  { key: "output-plugin", label: "出力プラグイン" },
-  { key: "general-plugin", label: "汎用プラグイン" },
-  { key: "filter-plugin", label: "フィルタプラグイン" },
-  { key: "script", label: "スクリプト" },
-  { key: "other", label: "その他" },
+  { key: "all", translationKey: "all" },
+  { key: "core", translationKey: "core" },
+  { key: "mod", translationKey: "mod" },
+  { key: "input-plugin", translationKey: "inputPlugin" },
+  { key: "output-plugin", translationKey: "outputPlugin" },
+  { key: "general-plugin", translationKey: "generalPlugin" },
+  { key: "filter-plugin", translationKey: "filterPlugin" },
+  { key: "script", translationKey: "script" },
+  { key: "other", translationKey: "other" },
 ] as const;
 
 const categorySchema = z.enum(packageCategories.map(({ key }) => key));
@@ -25,6 +25,14 @@ const sortSchema = z.enum(["popularity_desc", "trend_desc", "added_desc", "updat
 export type PackageCategory = z.infer<typeof categorySchema>;
 export type PackageDeprecationFilter = z.infer<typeof deprecationSchema>;
 export type PackageSortOrder = z.infer<typeof sortSchema>;
+
+export function packageCategoryTranslationKey(category: PackageCategory): string {
+  const definition = packageCategories.find(({ key }) => key === category);
+  if (definition === undefined) {
+    throw new Error(`Package category is undefined: ${category}`);
+  }
+  return definition.translationKey;
+}
 
 export interface PackageListItem {
   packageInfo: PackageInfo;
@@ -43,7 +51,7 @@ export const packageListHistoryStateSchema = z.object({
 
 export type PackageListHistoryState = z.infer<typeof packageListHistoryStateSchema>;
 
-const primaryCategoryByType = new Map<string, PackageCategory>([
+const primaryCategoryByType = new Map<string, Exclude<PackageCategory, "all">>([
   ["本体", "core"],
   ["core", "core"],
   ["MOD", "mod"],
@@ -62,7 +70,14 @@ const primaryCategoryByType = new Map<string, PackageCategory>([
   ["filterPlugin", "filter-plugin"],
   ["スクリプト", "script"],
   ["script", "script"],
+  ["その他", "other"],
+  ["other", "other"],
 ]);
+
+export function packageTypeTranslationKey(packageInfo: PackageInfo): string | undefined {
+  const category = primaryCategoryByType.get(packageInfo.type.trim());
+  return category === undefined ? undefined : packageCategoryTranslationKey(category);
+}
 
 function normalizeSearchText(value: string): string {
   return value.normalize("NFKC").toLocaleLowerCase("ja-JP");

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
   images: string[];
   packageName: string;
 }>();
+const { t } = useI18n({ useScope: "global" });
 
 const carouselElement = ref<HTMLElement>();
 const activeIndex = ref(0);
@@ -65,7 +67,7 @@ function handleKeydown(event: KeyboardEvent): void {
     class="image-carousel ui-focus-ring"
     role="region"
     aria-roledescription="carousel"
-    aria-label="パッケージのスクリーンショット"
+    :aria-label="t('package.carousel.region')"
     tabindex="0"
     @keydown="handleKeydown"
   >
@@ -75,7 +77,7 @@ function handleKeydown(event: KeyboardEvent): void {
         :key="image"
         class="screenshot-frame"
         :src="image"
-        :alt="`${packageName}のスクリーンショット ${index + 1}`"
+        :alt="t('package.carousel.image', { name: packageName, index: index + 1 })"
         loading="lazy"
         decoding="async"
       />
@@ -85,7 +87,7 @@ function handleKeydown(event: KeyboardEvent): void {
       v-if="activeIndex > 0"
       class="carousel-button carousel-button-previous ui-focus-ring"
       type="button"
-      aria-label="前のスクリーンショット"
+      :aria-label="t('package.carousel.previous')"
       @click="showPrevious"
     >
       <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -96,7 +98,7 @@ function handleKeydown(event: KeyboardEvent): void {
       v-if="activeIndex < images.length - 1"
       class="carousel-button carousel-button-next ui-focus-ring"
       type="button"
-      aria-label="次のスクリーンショット"
+      :aria-label="t('package.carousel.next')"
       @click="showNext"
     >
       <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -113,7 +115,12 @@ function handleKeydown(event: KeyboardEvent): void {
         type="button"
         role="tab"
         :aria-selected="index === activeIndex"
-        :aria-label="`${index + 1} / ${images.length} 枚目を表示`"
+        :aria-label="
+          t('package.carousel.slide', {
+            current: index + 1,
+            total: images.length,
+          })
+        "
         @click="scrollTo(index)"
       />
     </div>

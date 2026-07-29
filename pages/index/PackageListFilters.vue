@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
+import Card from "../../components/Card.vue";
 import {
   packageCategories,
   type PackageCategory,
   type PackageDeprecationFilter,
   type PackageSortOrder,
 } from "../../lib/packageList";
+
+const { t } = useI18n({ useScope: "global" });
 
 const deprecationIconByValue = {
   active: "i-lucide-circle-check-big",
@@ -63,22 +67,22 @@ function handleSort(event: Event): void {
 </script>
 
 <template>
-  <section class="package-filters" aria-label="パッケージの検索と絞り込み">
+  <Card class="package-filters" :aria-label="t('home.search.region')">
     <div class="filter-primary-row">
       <label class="search-field">
         <span aria-hidden="true" class="i-lucide-search search-icon" />
-        <span class="sr-only">パッケージを検索</span>
+        <span class="sr-only">{{ t("home.search.label") }}</span>
         <input
           type="search"
           :value="searchQuery"
-          placeholder="パッケージ名、作者、キーワードで検索..."
+          :placeholder="t('home.search.placeholder')"
           @input="handleSearch"
         />
         <button
           v-if="searchQuery"
           type="button"
-          class="search-clear ui-focus-ring"
-          aria-label="検索語をクリア"
+          class="search-clear ui-icon-button ui-focus-ring"
+          :aria-label="t('home.search.clear')"
           @click="emit('update:searchQuery', '')"
         >
           <span aria-hidden="true" class="i-lucide-x" />
@@ -88,7 +92,7 @@ function handleSort(event: Event): void {
       <div class="quick-filters">
         <div class="filter-heading">
           <span aria-hidden="true" class="i-lucide-filter heading-icon" />
-          <span>フィルター</span>
+          <span>{{ t("home.filters.label") }}</span>
         </div>
         <label class="select-control">
           <span
@@ -96,21 +100,25 @@ function handleSort(event: Event): void {
             :class="deprecationIconByValue[deprecationFilter]"
             class="control-icon"
           />
-          <select aria-label="非推奨状態" :value="deprecationFilter" @change="handleDeprecation">
-            <option value="active">非推奨を除外</option>
-            <option value="deprecated">非推奨のみ</option>
-            <option value="all">すべて</option>
+          <select
+            :aria-label="t('home.filters.deprecation')"
+            :value="deprecationFilter"
+            @change="handleDeprecation"
+          >
+            <option value="active">{{ t("home.deprecationStatus.active") }}</option>
+            <option value="deprecated">{{ t("home.deprecationStatus.deprecated") }}</option>
+            <option value="all">{{ t("home.deprecationStatus.all") }}</option>
           </select>
         </label>
         <button
           type="button"
-          class="tag-toggle ui-focus-ring"
+          class="tag-toggle ui-button ui-button-action ui-button-secondary ui-focus-ring"
           :class="{ active: tagsExpanded || selectedTags.length > 0 }"
           :aria-expanded="tagsExpanded"
           @click="emit('update:tagsExpanded', !tagsExpanded)"
         >
           <span aria-hidden="true" class="i-lucide-filter tag-filter-icon" />
-          タグ
+          {{ t("common.labels.tags") }}
           <span v-if="selectedTags.length > 0" class="tag-count">{{ selectedTags.length }}</span>
           <span
             aria-hidden="true"
@@ -124,9 +132,9 @@ function handleSort(event: Event): void {
     <div class="category-row">
       <div class="category-heading">
         <span aria-hidden="true" class="i-lucide-layers heading-icon" />
-        <span>種類</span>
+        <span>{{ t("home.filters.category") }}</span>
       </div>
-      <div class="category-tabs" role="group" aria-label="パッケージの種類">
+      <div class="category-tabs" role="group" :aria-label="t('home.filters.categoryAria')">
         <button
           v-for="category in packageCategories"
           :key="category.key"
@@ -135,45 +143,47 @@ function handleSort(event: Event): void {
           :aria-pressed="selectedCategory === category.key"
           @click="emit('update:selectedCategory', category.key)"
         >
-          {{ category.label }}
+          {{ t(`common.packageTypes.${category.translationKey}`) }}
         </button>
       </div>
       <div class="result-count">
         <strong>{{ resultCount }}</strong
-        ><span>件</span>
+        ><span>{{ t("home.filters.count") }}</span>
       </div>
       <div class="sort-heading">
         <span aria-hidden="true" class="i-lucide-arrow-up-down heading-icon" />
-        <span>並び替え</span>
+        <span>{{ t("home.filters.sort") }}</span>
       </div>
       <label class="select-control">
         <span aria-hidden="true" :class="sortIconByValue[sortOrder]" class="control-icon" />
-        <select aria-label="並び替え" :value="sortOrder" @change="handleSort">
-          <option value="popularity_desc">人気順</option>
-          <option value="trend_desc">トレンド順</option>
-          <option value="added_desc">新着順</option>
-          <option value="updated_desc">最終更新日順</option>
+        <select :aria-label="t('home.filters.sort')" :value="sortOrder" @change="handleSort">
+          <option value="popularity_desc">{{ t("home.sortOptions.popularity_desc") }}</option>
+          <option value="trend_desc">{{ t("home.sortOptions.trend_desc") }}</option>
+          <option value="added_desc">{{ t("home.sortOptions.added_desc") }}</option>
+          <option value="updated_desc">{{ t("home.sortOptions.updated_desc") }}</option>
         </select>
       </label>
     </div>
 
     <div v-if="selectedTags.length > 0 && !tagsExpanded" class="selected-tags">
-      <span>選択中:</span>
+      <span>{{ t("home.filters.selected") }}</span>
       <button v-for="tag in selectedTags" :key="tag" type="button" @click="emit('toggleTag', tag)">
         {{ tag }}
         <span aria-hidden="true" class="i-lucide-x selected-tag-icon" />
       </button>
-      <button type="button" class="clear-tags" @click="emit('clearTags')">すべてクリア</button>
+      <button type="button" class="clear-tags" @click="emit('clearTags')">
+        {{ t("home.filters.clearAll") }}
+      </button>
     </div>
 
     <div v-if="tagsExpanded" class="all-tags">
       <div class="all-tags-heading">
         <strong>
           <span aria-hidden="true" class="i-lucide-tags heading-icon" />
-          すべてのタグ
+          {{ t("home.filters.allTags") }}
         </strong>
         <button v-if="selectedTags.length > 0" type="button" @click="emit('clearTags')">
-          選択をクリア
+          {{ t("home.filters.clearSelection") }}
         </button>
       </div>
       <div class="tag-cloud">
@@ -189,7 +199,7 @@ function handleSort(event: Event): void {
         </button>
       </div>
     </div>
-  </section>
+  </Card>
 </template>
 
 <style scoped>
@@ -255,16 +265,7 @@ function handleSort(event: Event): void {
   right: var(--ui-space-3);
   width: 1.375rem;
   height: 1.375rem;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  color: var(--ui-text-subtle);
   transform: translateY(-50%);
-}
-
-.search-clear:hover {
-  background: var(--ui-surface-muted);
-  color: var(--ui-text);
 }
 
 .search-clear span {
@@ -371,15 +372,7 @@ function handleSort(event: Event): void {
 }
 
 .tag-toggle {
-  min-height: 2.375rem;
-  padding-inline: var(--ui-space-3);
   gap: var(--ui-space-2);
-  background: var(--ui-surface);
-  border: 1px solid var(--ui-border);
-  border-radius: var(--ui-radius-lg);
-  color: var(--ui-text-muted);
-  font-size: var(--ui-text-sm);
-  font-weight: 500;
 }
 
 .tag-toggle.active {

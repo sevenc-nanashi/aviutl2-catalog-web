@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useData } from "vike-vue/useData";
 import PackageContent from "./PackageContent.vue";
 import PackageHero from "./PackageHero.vue";
@@ -7,13 +8,14 @@ import PackageSidebar from "./PackageSidebar.vue";
 import type { Data } from "./+data";
 
 const data = useData<Data>();
+const { t } = useI18n({ useScope: "global" });
 const packageInfo = computed(() => data.packageInfo);
 </script>
 
 <template>
   <main class="package-page">
-    <nav aria-label="パンくずリスト" class="breadcrumb">
-      <a href="/" class="ui-focus-ring">ホーム</a>
+    <nav :aria-label="t('package.breadcrumb.label')" class="breadcrumb">
+      <a href="/" class="ui-focus-ring">{{ t("package.breadcrumb.home") }}</a>
       <svg aria-hidden="true" viewBox="0 0 24 24">
         <path d="m9 18 6-6-6-6" />
       </svg>

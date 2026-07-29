@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, ref } from "vue";
 import { useData } from "vike-vue/useData";
 import { z } from "zod";
+import { useI18n } from "vue-i18n";
 import {
   filterAndSortPackages,
   packageListHistoryStateSchema,
@@ -23,6 +24,7 @@ const historyEnvelopeSchema = z
   .passthrough();
 
 const data = useData<Data>();
+const { t } = useI18n({ useScope: "global" });
 const items: PackageListItem[] = data.packages.map((packageInfo, catalogIndex) => ({
   packageInfo,
   catalogIndex,
@@ -144,8 +146,8 @@ onMounted(() => {
       </div>
       <section v-else class="empty-state">
         <span aria-hidden="true" class="i-lucide-package-search empty-state-icon" />
-        <p>条件に一致するパッケージはありません</p>
-        <button type="button" @click="clearConditions">条件をクリア</button>
+        <p>{{ t("home.empty.title") }}</p>
+        <button type="button" @click="clearConditions">{{ t("home.empty.clear") }}</button>
       </section>
     </div>
   </main>
@@ -156,9 +158,6 @@ onMounted(() => {
   width: min(100%, 96rem);
   margin-inline: auto;
   overflow: clip;
-  background: var(--ui-page);
-  border: 1px solid var(--ui-border);
-  border-radius: var(--ui-radius-2xl);
 }
 
 .package-list-content {

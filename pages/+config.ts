@@ -7,7 +7,8 @@ import vikeVue from "vike-vue/config";
 export default {
   // https://vike.dev/head-tags
   title: "AviUtl2 Catalog Web",
-  description: "AviUtl2 Catalogの非公式Webビューワー",
+  lang: (pageContext) => pageContext.locale,
+  passToClient: ["locale"],
 
   extends: [vikeVue],
 } as Config;

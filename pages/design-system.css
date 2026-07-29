@@ -36,6 +36,9 @@
   --ui-radius-xl: 0.75rem;
   --ui-radius-2xl: 1rem;
   --ui-shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06);
+  --ui-shadow-card-color: light-dark(rgb(30 64 175 / 0.05), rgb(0 0 0 / 0.4));
+  --ui-shadow-button-color: light-dark(rgb(15 23 42 / 0.16), rgb(0 0 0 / 0.28));
+  --ui-shadow-button-hover-color: light-dark(rgb(15 23 42 / 0.2), rgb(0 0 0 / 0.36));
 
   /* Type */
   --ui-text-xs: 0.75rem;
@@ -59,6 +62,25 @@
   border: 1px solid var(--ui-border);
   border-radius: var(--ui-radius-2xl);
   box-shadow: var(--ui-shadow-sm);
+}
+
+.ui-interactive-surface {
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-2xl);
+  transition:
+    border-color 300ms ease-out,
+    box-shadow 300ms ease-out,
+    transform 300ms ease-out;
+}
+
+.ui-interactive-surface:hover {
+  border-color: light-dark(
+    color-mix(in srgb, theme("colors.blue.300") 50%, transparent),
+    theme("colors.slate.600")
+  );
+  box-shadow: 0 12px 30px var(--ui-shadow-card-color);
+  transform: translateY(-2px);
 }
 
 .ui-button {
@@ -88,8 +110,66 @@
   background: var(--ui-primary-hover);
 }
 
+.ui-button-secondary {
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  color: var(--ui-text-muted);
+}
+
+.ui-button-secondary:hover {
+  background: var(--ui-surface-muted);
+  border-color: var(--ui-border-muted);
+  color: var(--ui-text);
+}
+
+.ui-button-neutral-primary {
+  background: light-dark(theme("colors.slate.500"), theme("colors.slate.200"));
+  border: 1px solid transparent;
+  color: light-dark(theme("colors.slate.50"), theme("colors.slate.900"));
+  box-shadow: 0 4px 12px var(--ui-shadow-button-color);
+}
+
+.ui-button-neutral-primary:hover {
+  background: light-dark(theme("colors.slate.600"), theme("colors.slate.300"));
+  box-shadow: 0 6px 16px var(--ui-shadow-button-hover-color);
+}
+
+.ui-button-action {
+  min-height: 2.375rem;
+  padding-inline: var(--ui-space-3);
+  border-radius: var(--ui-radius-lg);
+}
+
+.ui-button-compact {
+  min-height: 2.25rem;
+  padding-inline: var(--ui-space-3);
+  border-radius: var(--ui-radius-lg);
+  font-size: var(--ui-text-xs);
+  font-weight: 700;
+}
+
 .ui-button:active {
   transform: translateY(1px);
+}
+
+.ui-button-neutral-primary:active {
+  box-shadow: var(--ui-shadow-sm);
+  transform: scale(0.98);
+}
+
+.ui-icon-button {
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--ui-text-subtle);
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out;
+}
+
+.ui-icon-button:hover {
+  background: var(--ui-surface-muted);
+  color: var(--ui-text);
 }
 
 .ui-badge {

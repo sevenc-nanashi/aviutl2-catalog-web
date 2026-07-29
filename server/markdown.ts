@@ -5,6 +5,7 @@ import githubAlerts from "markdown-it-github-alerts";
 import type { RenderRule } from "markdown-it/lib/renderer.mjs";
 import type { RuleBlock } from "markdown-it/lib/parser_block.mjs";
 import { toRawGithubProxyUrl } from "../lib/catalog.ts";
+import { translate, type SupportedLocale } from "../lib/i18n/index.ts";
 
 const DETAILS_OPEN_RE = /^<details\b[^>]*>/i;
 const DETAILS_OPEN_LINE_RE = /^<details\b[^>]*>\s*$/i;
@@ -21,24 +22,6 @@ const alertIcons = {
   caution:
     '<svg aria-hidden="true" data-is-alert-icon="true" viewBox="0 0 24 24"><path d="M12 2 2 12l10 10 10-10Z"/><path d="M12 8v5M12 17h.01"/></svg>',
 };
-
-const markdown = new MarkdownIt({
-  breaks: true,
-  html: true,
-  linkify: false,
-  typographer: false,
-});
-
-markdown.use(githubAlerts, {
-  titles: {
-    note: "注記",
-    tip: "ヒント",
-    important: "重要",
-    warning: "警告",
-    caution: "注意",
-  },
-  icons: alertIcons,
-});
 
 function getLineText(state: Parameters<RuleBlock>[0], line: number): string {
   const start = state.bMarks[line] + state.tShift[line];
@@ -113,46 +96,73 @@ const detailsBlockRule: RuleBlock = (state, startLine, endLine, silent) => {
   return true;
 };
 
-markdown.block.ruler.before("html_block", "details_block", detailsBlockRule, {
-  alt: ["paragraph", "reference", "blockquote"],
-});
+function createMarkdown(locale: SupportedLocale): MarkdownIt {
+  const markdown = new MarkdownIt({
+    breaks: true,
+    html: true,
+    linkify: false,
+    typographer: false,
+  });
 
-markdown.renderer.rules.html_block = (tokens, index) => sanitizeMarkdownHtml(tokens[index].content);
-markdown.renderer.rules.html_inline = (tokens, index) =>
-  sanitizeMarkdownHtml(tokens[index].content);
+  markdown.use(githubAlerts, {
+    titles: {
+      note: translate(locale, "common.markdownAlerts.note"),
+      tip: translate(locale, "common.markdownAlerts.tip"),
+      important: translate(locale, "common.markdownAlerts.important"),
+      warning: translate(locale, "common.markdownAlerts.warning"),
+      caution: translate(locale, "common.markdownAlerts.caution"),
+    },
+    icons: alertIcons,
+  });
 
-const defaultImageRenderer: RenderRule =
-  markdown.renderer.rules.image ??
-  ((tokens, index, options, _environment, renderer) =>
-    renderer.renderToken(tokens, index, options));
-const defaultLinkRenderer: RenderRule =
-  markdown.renderer.rules.link_open ??
-  ((tokens, index, options, _environment, renderer) =>
-    renderer.renderToken(tokens, index, options));
+  markdown.block.ruler.before("html_block", "details_block", detailsBlockRule, {
+    alt: ["paragraph", "reference", "blockquote"],
+  });
+  markdown.renderer.rules.html_block = (tokens, index) =>
+    sanitizeMarkdownHtml(tokens[index].content);
+  markdown.renderer.rules.html_inline = (tokens, index) =>
+    sanitizeMarkdownHtml(tokens[index].content);
 
-markdown.renderer.rules.image = (tokens, index, options, environment, renderer) => {
-  const baseUrl = requireBaseUrl(environment);
-  const source = tokens[index].attrGet("src");
-  if (source === null) {
-    throw new Error("Markdown image source is undefined");
-  }
-  tokens[index].attrSet("src", toRawGithubProxyUrl(new URL(source, baseUrl)));
-  tokens[index].attrSet("loading", "lazy");
-  tokens[index].attrSet("decoding", "async");
-  return defaultImageRenderer(tokens, index, options, environment, renderer);
-};
+  const defaultImageRenderer: RenderRule =
+    markdown.renderer.rules.image ??
+    ((tokens, index, options, _environment, renderer) =>
+      renderer.renderToken(tokens, index, options));
+  const defaultLinkRenderer: RenderRule =
+    markdown.renderer.rules.link_open ??
+    ((tokens, index, options, _environment, renderer) =>
+      renderer.renderToken(tokens, index, options));
 
-markdown.renderer.rules.link_open = (tokens, index, options, environment, renderer) => {
-  const baseUrl = requireBaseUrl(environment);
-  const href = tokens[index].attrGet("href");
-  if (href === null) {
-    throw new Error("Markdown link target is undefined");
-  }
-  tokens[index].attrSet("href", resolveMarkdownLink(href, baseUrl));
-  tokens[index].attrSet("target", "_blank");
-  tokens[index].attrSet("rel", "noopener noreferrer");
-  return defaultLinkRenderer(tokens, index, options, environment, renderer);
-};
+  markdown.renderer.rules.image = (tokens, index, options, environment, renderer) => {
+    const baseUrl = requireBaseUrl(environment);
+    const source = tokens[index].attrGet("src");
+    if (source === null) {
+      throw new Error("Markdown image source is undefined");
+    }
+    tokens[index].attrSet("src", toRawGithubProxyUrl(new URL(source, baseUrl)));
+    tokens[index].attrSet("loading", "lazy");
+    tokens[index].attrSet("decoding", "async");
+    return defaultImageRenderer(tokens, index, options, environment, renderer);
+  };
+
+  markdown.renderer.rules.link_open = (tokens, index, options, environment, renderer) => {
+    const baseUrl = requireBaseUrl(environment);
+    const href = tokens[index].attrGet("href");
+    if (href === null) {
+      throw new Error("Markdown link target is undefined");
+    }
+    tokens[index].attrSet("href", resolveMarkdownLink(href, baseUrl));
+    tokens[index].attrSet("target", "_blank");
+    tokens[index].attrSet("rel", "noopener noreferrer");
+    return defaultLinkRenderer(tokens, index, options, environment, renderer);
+  };
+
+  return markdown;
+}
+
+const markdownByLocale = {
+  ja: createMarkdown("ja"),
+  en: createMarkdown("en"),
+} satisfies Record<SupportedLocale, MarkdownIt>;
 
 function requireBaseUrl(environment: unknown): string {
   if (
@@ -281,6 +291,10 @@ function normalizeBadgeParagraphs(html: string): string {
   });
 }
 
-export function renderPackageMarkdown(source: string, baseUrl: string): string {
-  return normalizeBadgeParagraphs(markdown.render(source, { baseUrl }).trim());
+export function renderPackageMarkdown(
+  source: string,
+  baseUrl: string,
+  locale: SupportedLocale,
+): string {
+  return normalizeBadgeParagraphs(markdownByLocale[locale].render(source, { baseUrl }).trim());
 }

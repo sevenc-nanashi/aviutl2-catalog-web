@@ -8,6 +8,7 @@ import {
   type PackagePageData,
   resolveCatalogUrl,
 } from "../lib/catalog";
+import type { SupportedLocale } from "../lib/i18n/index.ts";
 import { renderPackageMarkdown } from "./markdown";
 
 const CATALOG_CACHE_SECONDS = 60 * 60;
@@ -64,6 +65,7 @@ async function loadDescription(
 
 export async function fetchPackagePageData(
   packageId: string,
+  locale: SupportedLocale,
 ): Promise<PackagePageData | undefined> {
   const packageInfo = await fetchPackageInfo(packageId);
   if (packageInfo === undefined) {
@@ -73,7 +75,7 @@ export async function fetchPackagePageData(
   const description = await loadDescription(packageInfo);
   return {
     packageInfo,
-    descriptionHtml: renderPackageMarkdown(description.markdownSource, description.baseUrl),
+    descriptionHtml: renderPackageMarkdown(description.markdownSource, description.baseUrl, locale),
     heroImage: collectHeroImage(packageInfo),
     screenshots: collectScreenshots(packageInfo),
   };

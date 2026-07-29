@@ -3,6 +3,7 @@ import vike from "@vikejs/hono";
 import { Hono } from "hono";
 import { showRoutes } from "hono/dev";
 import { z } from "zod";
+import { resolveLocale, translate } from "../lib/i18n/index.ts";
 import { fetchCatalog, fetchPackageInfo } from "./catalog";
 import { resolvePackageDownloadUrl } from "./download";
 
@@ -37,24 +38,26 @@ app.get("/api/badge/:name", async (c) => {
 });
 
 app.get("/api/package/:id", async (c) => {
+  const locale = resolveLocale(c.req.raw.headers);
   const packageInfo = await fetchPackageInfo(c.req.param("id"));
   if (packageInfo === undefined) {
-    return c.json({ error: "Package not found" }, 404);
+    return c.json({ error: translate(locale, "package.errors.downloadNotFound") }, 404);
   }
   c.header("Cache-Control", "public, max-age=3600");
   return c.json(packageInfo);
 });
 
 app.get("/api/package/:id/download", async (c) => {
+  const locale = resolveLocale(c.req.raw.headers);
   const packageInfo = await fetchPackageInfo(c.req.param("id"));
   if (packageInfo === undefined) {
-    return c.text("パッケージが見つかりませんでした。", 404);
+    return c.text(translate(locale, "package.errors.downloadNotFound"), 404);
   }
   try {
     return c.redirect(await resolvePackageDownloadUrl(packageInfo), 302);
   } catch (error) {
     console.error(`[package:${packageInfo.id}] Failed to resolve download URL`, error);
-    return c.text("ダウンロード先を取得できませんでした。", 502);
+    return c.text(translate(locale, "package.errors.downloadFailed"), 502);
   }
 });
 
