@@ -47,10 +47,10 @@
 import { useI18n } from "vue-i18n";
 import * as v from "valibot";
 import { localeCookie, supportedLocaleSchema } from "../lib/i18n/index.ts";
-import "@unocss/reset/tailwind-v4.css";
+import "virtual:uno.css";
 import "@fontsource/noto-sans-jp/400.css";
 import "@fontsource/noto-sans-jp/700.css";
-import "virtual:uno.css";
+import "./reset.css";
 import "./design-system.css";
 import "./style.css";
 
