@@ -4,19 +4,15 @@ import { useI18n } from "vue-i18n";
 import type { PackageInfo } from "../../../lib/catalog";
 import { latestReleaseDate } from "../../../lib/catalog";
 import { shouldShowDirectDownload } from "../../../lib/packageDownload";
-import { packageTypeTranslationKey } from "../../../lib/packageList";
+import { packageListFilterUrl, packageTypeTranslationKey } from "../../../lib/packageList";
 
 const props = defineProps<{
   packageInfo: PackageInfo;
 }>();
 const { locale, t } = useI18n({ useScope: "global" });
 
-const catalogUrl = computed(
-  () => `aviutl2-catalog://package/${props.packageInfo.id}`,
-);
-const directDownloadUrl = computed(() =>
-  shouldShowDirectDownload(props.packageInfo),
-);
+const catalogUrl = computed(() => `aviutl2-catalog://package/${props.packageInfo.id}`);
+const directDownloadUrl = computed(() => shouldShowDirectDownload(props.packageInfo));
 const latestDate = computed(() => {
   const releaseDate = latestReleaseDate(props.packageInfo);
   if (releaseDate === undefined) {
@@ -26,9 +22,7 @@ const latestDate = computed(() => {
     dateStyle: "medium",
   }).format(new Date(`${releaseDate}T00:00:00Z`));
 });
-const licenseTypes = computed(() =>
-  props.packageInfo.licenses.map((license) => license.type),
-);
+const licenseTypes = computed(() => props.packageInfo.licenses.map((license) => license.type));
 const packageType = computed(() => {
   const translationKey = packageTypeTranslationKey(props.packageInfo);
   if (translationKey === undefined) {
@@ -36,6 +30,12 @@ const packageType = computed(() => {
   }
   return t(`common.packageTypes.${translationKey}`);
 });
+const authorFilterUrl = computed(() =>
+  packageListFilterUrl({ searchQuery: props.packageInfo.author, selectedTags: [] }),
+);
+function tagFilterUrl(tag: string): string {
+  return packageListFilterUrl({ searchQuery: "", selectedTags: [tag] });
+}
 </script>
 
 <template>
@@ -55,7 +55,9 @@ const packageType = computed(() => {
                 <path d="M19 21a7 7 0 0 0-14 0" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
-              {{ packageInfo.author }}
+              <a :href="authorFilterUrl" class="metadata-filter-link ui-focus-ring">
+                {{ packageInfo.author }}
+              </a>
             </dd>
           </div>
           <div v-if="packageInfo.originalAuthor">
@@ -89,13 +91,14 @@ const packageType = computed(() => {
         <div v-if="packageInfo.tags.length > 0" class="metadata-group">
           <h3>{{ t("common.labels.tags") }}</h3>
           <div class="chip-list">
-            <span
+            <a
               v-for="tag in packageInfo.tags"
               :key="tag"
+              :href="tagFilterUrl(tag)"
               class="ui-badge ui-badge-neutral"
             >
               #{{ tag }}
-            </span>
+            </a>
           </div>
         </div>
 

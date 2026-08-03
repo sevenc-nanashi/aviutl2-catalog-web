@@ -5,6 +5,7 @@ import * as v from "valibot";
 import { useI18n } from "vue-i18n";
 import {
   filterAndSortPackages,
+  parsePackageListFilterQuery,
   packageListHistoryStateSchema,
   packageListTags,
   type PackageCategory,
@@ -92,6 +93,13 @@ function consumeHistoryState(historyState: v.InferOutput<typeof historyEnvelopeS
 }
 
 onMounted(() => {
+  const filterQuery = parsePackageListFilterQuery(new URLSearchParams(window.location.search));
+  if (filterQuery !== undefined) {
+    searchQuery.value = filterQuery.searchQuery;
+    selectedTags.value = filterQuery.selectedTags;
+    tagsExpanded.value = filterQuery.selectedTags.length > 0;
+    return;
+  }
   const parsedHistory = v.safeParse(historyEnvelopeSchema, window.history.state);
   if (!parsedHistory.success) {
     return;

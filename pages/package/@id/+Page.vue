@@ -341,6 +341,20 @@ const packageInfo = computed(() => data.packageInfo);
   stroke-width: 2;
 }
 
+.metadata-filter-link {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.18em;
+  transition:
+    color 150ms ease-out,
+    text-decoration-color 150ms ease-out;
+}
+
+.metadata-filter-link:hover {
+  color: var(--ui-primary-text);
+  text-decoration-color: currentColor;
+}
+
 .metadata-list .version {
   font-variant-numeric: tabular-nums;
 }
@@ -355,6 +369,17 @@ const packageInfo = computed(() => data.packageInfo);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
+}
+
+.chip-list a {
+  transition:
+    border-color 150ms ease-out,
+    color 150ms ease-out;
+}
+
+.chip-list a:hover {
+  border-color: var(--ui-primary-border);
+  color: var(--ui-primary-text);
 }
 
 .repository-link {

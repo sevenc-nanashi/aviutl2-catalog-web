@@ -5,7 +5,9 @@ import { packageInfoSchema, type PackageInfo } from "./catalog.ts";
 import {
   filterAndSortPackages,
   packageCategory,
+  packageListFilterUrl,
   packageListHistoryStateSchema,
+  parsePackageListFilterQuery,
   type PackageListItem,
 } from "./packageList.ts";
 
@@ -89,4 +91,17 @@ test("履歴状態はスキーマで検証する", () => {
     true,
   );
   assert.equal(v.safeParse(packageListHistoryStateSchema, { sortOrder: "invalid" }).success, false);
+});
+
+test("詳細ページ用フィルターURLを生成し、一覧で復元する", () => {
+  const url = packageListFilterUrl({ searchQuery: "テスト 名前", selectedTags: ["映像 効果"] });
+  assert.equal(
+    url,
+    "/?q=%E3%83%86%E3%82%B9%E3%83%88+%E5%90%8D%E5%89%8D&tag=%E6%98%A0%E5%83%8F+%E5%8A%B9%E6%9E%9C",
+  );
+  assert.deepEqual(parsePackageListFilterQuery(new URL(url, "https://example.com").searchParams), {
+    searchQuery: "テスト 名前",
+    selectedTags: ["映像 効果"],
+  });
+  assert.equal(parsePackageListFilterQuery(new URLSearchParams()), undefined);
 });

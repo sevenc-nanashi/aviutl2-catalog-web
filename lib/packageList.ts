@@ -26,6 +26,38 @@ export type PackageCategory = v.InferOutput<typeof categorySchema>;
 export type PackageDeprecationFilter = v.InferOutput<typeof deprecationSchema>;
 export type PackageSortOrder = v.InferOutput<typeof sortSchema>;
 
+const packageListFilterQuerySchema = v.object({
+  searchQuery: v.string(),
+  selectedTags: v.array(v.string()),
+});
+
+export type PackageListFilterQuery = v.InferOutput<typeof packageListFilterQuerySchema>;
+
+export function packageListFilterUrl(query: PackageListFilterQuery): string {
+  const parsedQuery = v.parse(packageListFilterQuerySchema, query);
+  const searchParams = new URLSearchParams();
+  if (parsedQuery.searchQuery.length > 0) {
+    searchParams.set("q", parsedQuery.searchQuery);
+  }
+  for (const tag of parsedQuery.selectedTags) {
+    searchParams.append("tag", tag);
+  }
+  const queryString = searchParams.toString();
+  return queryString.length > 0 ? `/?${queryString}` : "/";
+}
+
+export function parsePackageListFilterQuery(
+  searchParams: URLSearchParams,
+): PackageListFilterQuery | undefined {
+  if (!searchParams.has("q") && !searchParams.has("tag")) {
+    return undefined;
+  }
+  return v.parse(packageListFilterQuerySchema, {
+    searchQuery: searchParams.get("q") ?? "",
+    selectedTags: searchParams.getAll("tag"),
+  });
+}
+
 export function packageCategoryTranslationKey(category: PackageCategory): string {
   const definition = packageCategories.find(({ key }) => key === category);
   if (definition === undefined) {
