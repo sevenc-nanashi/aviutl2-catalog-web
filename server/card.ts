@@ -1,14 +1,21 @@
 import van, { Element } from "mini-van-plate/van-plate";
-import { ImageResponse, loadGoogleFont, render } from "@sevenc-nanashi/workers-og";
+import {
+  ImageResponse,
+  loadGoogleFont,
+  render,
+} from "@sevenc-nanashi/workers-og";
 import { PackageInfo, resolveCatalogUrl } from "../lib/catalog";
 
 const { div, img } = van.tags;
 
-function styles(styles: Record<string, string | number | undefined | null>): string {
+function styles(
+  styles: Record<string, string | number | undefined | null>,
+): string {
   return Object.entries(styles)
     .filter(([, value]) => value !== undefined && value !== null)
     .map(
-      ([key, value]) => `${key.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)}:${value}`,
+      ([key, value]) =>
+        `${key.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)}:${value}`,
     )
     .join(";");
 }
@@ -20,7 +27,8 @@ const font = "Noto Sans JP";
 
 // export const Card = () => {};
 function Card(packageInfo: PackageInfo): Element {
-  const background = packageInfo.images.find((image) => image.infoImg)?.infoImg?.[0];
+  const background = packageInfo.images.find((image) => image.infoImg)
+    ?.infoImg?.[0];
   const rawThumbnail = packageInfo.images
     .map(({ thumbnail: source }) => source)
     .find((source) => source !== undefined && source.length > 0);
@@ -153,7 +161,9 @@ export async function renderCardSvg(packageInfo: PackageInfo) {
   });
 }
 
-export async function renderCardImage(packageInfo: PackageInfo): Promise<ImageResponse> {
+export async function renderCardImage(
+  packageInfo: PackageInfo,
+): Promise<ImageResponse> {
   return new ImageResponse(Card(packageInfo).render(), {
     width,
     height,

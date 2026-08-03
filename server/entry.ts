@@ -1,3 +1,4 @@
+/// <reference types="../worker-configuration.d.ts" />
 import icon from "./icon.svg?raw";
 import vike from "@vikejs/hono";
 import { Hono } from "hono";
@@ -7,7 +8,13 @@ import { sValidator } from "@hono/standard-validator";
 import { resolveLocale, translate } from "../lib/i18n/index.ts";
 import { fetchCatalog, fetchPackageInfo } from "./catalog";
 import { resolvePackageDownloadUrl } from "./download";
-import { renderCardHtml, renderCardImage, renderCardSvg } from "./card.ts";
+import {
+  cardCacheControl,
+  renderCardHtml,
+  renderCardImage,
+  renderCardSvg,
+} from "./card.ts";
+import { packageInfoEtag } from "./cardCache.ts";
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
@@ -135,6 +142,7 @@ app.get(
     }),
   ),
   async (c) => {
+    const cache = await caches.open("card-cache");
     const { packageName } = c.req.param();
     const query = c.req.valid("query");
     const packageInfo = await fetchPackageInfo(packageName);
@@ -150,7 +158,27 @@ app.get(
       return c.html(svg);
     }
 
-    return renderCardImage(packageInfo);
+    const etag = await packageInfoEtag(packageInfo);
+    if (c.req.header("If-None-Match") === etag) {
+      return new Response(null, {
+        status: 304,
+        headers: {
+          "Cache-Control": cardCacheControl,
+          ETag: etag,
+        },
+      });
+    }
+
+    const cacheKey = new Request(c.req.url, { method: "GET" });
+    const cachedResponse = await cache.match(cacheKey);
+    if (cachedResponse?.headers.get("ETag") === etag) {
+      return cachedResponse;
+    }
+
+    const imageResponse = await renderCardImage(packageInfo);
+    imageResponse.headers.set("ETag", etag);
+    await cache.put(cacheKey, imageResponse.clone());
+    return imageResponse;
   },
 );
 

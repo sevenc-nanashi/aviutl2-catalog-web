@@ -12,8 +12,8 @@ importers:
         specifier: ^0.3.0
         version: 0.3.0(@standard-schema/spec@1.1.0)(hono@4.12.32)
       '@sevenc-nanashi/workers-og':
-        specifier: ^0.0.31
-        version: 0.0.31
+        specifier: ^0.0.32
+        version: 0.0.32
       '@standard-schema/spec':
         specifier: ^1.0.0
         version: 1.1.0
@@ -1222,8 +1222,8 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@sevenc-nanashi/workers-og@0.0.31':
-    resolution: {integrity: sha512-vqxHdAoaAYPtNdnxFE+K7WkrWpS8mVwP0yUleRAzvGvyiaQnHPvhivYE5QB+1pz2CCVg7C5Dp9hqcANhANgThQ==}
+  '@sevenc-nanashi/workers-og@0.0.32':
+    resolution: {integrity: sha512-5tDCYzu6zeFx4ajGABxt0zVpSYgFQS5KRan5HVwhZeJb4j3TM7mwTScAri7+u9DAFvEVWhfLtc3NaYvfSrJx+A==}
 
   '@shikijs/core@4.3.1':
     resolution: {integrity: sha512-ANMDxuaPsNMdDC1m4vfvhlDmJweMwkE5XitTwrq2rWHx5jM+dlm4MmHt2PP6t0uejfR77SuhrhJ0zEijIF/uhA==}
@@ -3256,7 +3256,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@sevenc-nanashi/workers-og@0.0.31':
+  '@sevenc-nanashi/workers-og@0.0.32':
     dependencies:
       just-camel-case: 6.2.0
       satori: 0.29.0
