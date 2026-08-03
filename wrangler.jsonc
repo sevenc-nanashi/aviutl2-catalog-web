@@ -3,4 +3,7 @@
   "name": "aviutl2-catalog-web",
   "compatibility_date": "2025-09-06",
   "main": "vike:server-entry",
+  "limits": {
+    "cpu_ms": 50,
+  },
 }

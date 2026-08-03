@@ -17,5 +17,9 @@ export async function data(pageContext: PageContextServer) {
   if (packageData === undefined) {
     throw render(404, translate(pageContext.locale, "package.errors.notFound", { id: packageId }));
   }
-  return packageData;
+  const cardPath = `/api/card/${encodeURIComponent(packageData.packageInfo.id)}?format=image`;
+  return {
+    ...packageData,
+    ogImageUrl: new URL(cardPath, pageContext.urlOriginal).toString(),
+  };
 }
