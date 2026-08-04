@@ -170,6 +170,7 @@ export async function renderCardImage(
     headers: {
       "Cache-Control": "public, max-age=3600",
     },
+    format: "png",
     fonts: [
       {
         name: "Noto Sans JP",
