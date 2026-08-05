@@ -148,8 +148,11 @@ app.get(
       return c.html(html);
     }
     if (query.format === "svg") {
-      const svg = (await renderCardSvg(packageInfo)) as string;
-      return c.html(svg);
+      const svg = await renderCardSvg(packageInfo);
+      return c.body(svg, 200, {
+        "Content-Type": "image/svg+xml",
+        "Cache-Control": "public, max-age=3600",
+      });
     }
 
     const etag = await packageInfoEtag(packageInfo);
