@@ -3,7 +3,7 @@ import { resolveCatalogUrl } from "../lib/catalog.ts";
 import type { PackageInfo } from "../lib/catalog.ts";
 import { packageCategory, type PackageCategory } from "../lib/packageList.ts";
 
-const { div, img } = van.tags;
+const { div, span, img } = van.tags;
 
 function styles(
   styles: Record<string, string | number | undefined | null>,
@@ -174,9 +174,10 @@ function Card(packageInfo: PackageInfo): Element {
             fontSize: `${unit * 1.5}px`,
             fontWeight: 600,
             display: "flex",
+            flexWrap: "wrap",
           }),
         },
-        packageInfo.name.replaceAll(/(?<=[_\.])/g, /* zwsp */ "\u200B"),
+        packageInfo.name.split(/(?<=[_\.])/g).map((part) => span(part))
       ),
       div(
         {

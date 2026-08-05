@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useData } from "vike-vue/useData";
 import * as v from "valibot";
 import { useI18n } from "vue-i18n";
@@ -35,6 +35,7 @@ const selectedTags = ref<string[]>([]);
 const deprecationFilter = ref<PackageDeprecationFilter>("active");
 const sortOrder = ref<PackageSortOrder>("popularity_desc");
 const tagsExpanded = ref(false);
+let urlSyncEnabled = false;
 
 const allTags = packageListTags(items);
 const filteredPackages = computed(() =>
@@ -92,32 +93,44 @@ function consumeHistoryState(historyState: v.InferOutput<typeof historyEnvelopeS
   window.history.replaceState(nextHistoryState, "");
 }
 
+watch(searchQuery, (nextSearchQuery) => {
+  if (!urlSyncEnabled) {
+    return;
+  }
+  const url = new URL(window.location.href);
+  if (nextSearchQuery.length > 0) {
+    url.searchParams.set("q", nextSearchQuery);
+  } else {
+    url.searchParams.delete("q");
+  }
+  window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+});
+
 onMounted(() => {
   const filterQuery = parsePackageListFilterQuery(new URLSearchParams(window.location.search));
   if (filterQuery !== undefined) {
     searchQuery.value = filterQuery.searchQuery;
     selectedTags.value = filterQuery.selectedTags;
     tagsExpanded.value = filterQuery.selectedTags.length > 0;
-    return;
+  } else {
+    const parsedHistory = v.safeParse(historyEnvelopeSchema, window.history.state);
+    if (parsedHistory.success) {
+      const savedState = parsedHistory.output.aviutl2CatalogPackageList;
+      if (savedState !== undefined) {
+        searchQuery.value = savedState.searchQuery;
+        selectedCategory.value = savedState.selectedCategory;
+        selectedTags.value = savedState.selectedTags;
+        deprecationFilter.value = savedState.deprecationFilter;
+        sortOrder.value = savedState.sortOrder;
+        tagsExpanded.value = savedState.tagsExpanded;
+        consumeHistoryState(parsedHistory.output);
+        void nextTick(() => {
+          window.scrollTo({ top: savedState.scrollY, behavior: "instant" });
+        });
+      }
+    }
   }
-  const parsedHistory = v.safeParse(historyEnvelopeSchema, window.history.state);
-  if (!parsedHistory.success) {
-    return;
-  }
-  const savedState = parsedHistory.output.aviutl2CatalogPackageList;
-  if (savedState === undefined) {
-    return;
-  }
-  searchQuery.value = savedState.searchQuery;
-  selectedCategory.value = savedState.selectedCategory;
-  selectedTags.value = savedState.selectedTags;
-  deprecationFilter.value = savedState.deprecationFilter;
-  sortOrder.value = savedState.sortOrder;
-  tagsExpanded.value = savedState.tagsExpanded;
-  consumeHistoryState(parsedHistory.output);
-  void nextTick(() => {
-    window.scrollTo({ top: savedState.scrollY, behavior: "instant" });
-  });
+  urlSyncEnabled = true;
 });
 </script>
 
