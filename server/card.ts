@@ -1,9 +1,5 @@
 import van, { Element } from "mini-van-plate/van-plate";
-import {
-  ImageResponse,
-  loadGoogleFont,
-  render,
-} from "@sevenc-nanashi/workers-og";
+import { loadGoogleFont, render } from "@sevenc-nanashi/workers-og";
 import { PackageInfo, resolveCatalogUrl } from "../lib/catalog";
 
 const { div, img } = van.tags;
@@ -163,25 +159,25 @@ export async function renderCardSvg(packageInfo: PackageInfo) {
 
 export async function renderCardImage(
   packageInfo: PackageInfo,
-): Promise<ImageResponse> {
-  return new ImageResponse(Card(packageInfo).render(), {
-    width,
-    height,
-    headers: {
-      "Cache-Control": "public, max-age=3600",
+): Promise<Uint8Array<ArrayBuffer>> {
+  return (await render({
+    element: Card(packageInfo).render(),
+    options: {
+      width,
+      height,
+      format: "png",
+      fonts: [
+        {
+          name: "Noto Sans JP",
+          data: await loadGoogleFont({ family: "Noto Sans JP", weight: 600 }),
+          weight: 600,
+        },
+        {
+          name: "Noto Sans JP",
+          data: await loadGoogleFont({ family: "Noto Sans JP", weight: 400 }),
+          weight: 400,
+        },
+      ],
     },
-    format: "png",
-    fonts: [
-      {
-        name: "Noto Sans JP",
-        data: await loadGoogleFont({ family: "Noto Sans JP", weight: 600 }),
-        weight: 600,
-      },
-      {
-        name: "Noto Sans JP",
-        data: await loadGoogleFont({ family: "Noto Sans JP", weight: 400 }),
-        weight: 400,
-      },
-    ],
-  });
+  })) as Uint8Array<ArrayBuffer>;
 }

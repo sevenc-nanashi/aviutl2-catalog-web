@@ -156,8 +156,14 @@ app.get(
     if (c.req.header("If-None-Match") === etag) {
       return c.body(null, 304);
     }
-    const response = await renderCardImage(packageInfo);
-    response.headers.set("ETag", etag);
+    const image = await renderCardImage(packageInfo);
+    const response = new Response(new Blob([image]), {
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=3600",
+        ETag: etag,
+      },
+    });
     return response;
   },
 );
