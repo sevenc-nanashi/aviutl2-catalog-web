@@ -5,11 +5,14 @@ import { packageCategory, type PackageCategory } from "../lib/packageList.ts";
 
 const { div, img } = van.tags;
 
-function styles(styles: Record<string, string | number | undefined | null>): string {
+function styles(
+  styles: Record<string, string | number | undefined | null>,
+): string {
   return Object.entries(styles)
     .filter(([, value]) => value !== undefined && value !== null)
     .map(
-      ([key, value]) => `${key.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)}:${value}`,
+      ([key, value]) =>
+        `${key.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`)}:${value}`,
     )
     .join(";");
 }
@@ -39,7 +42,9 @@ const thumbnailIconPaths = {
   "general-plugin": [
     "M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0Z",
   ],
-  "filter-plugin": ["M10 5H3m9 14H3M14 3v4m2 10v4m5-9h-9m9 7h-5m5-14h-7M8 10v4m0-2H3"],
+  "filter-plugin": [
+    "M10 5H3m9 14H3M14 3v4m2 10v4m5-9h-9m9 7h-5m5-14h-7M8 10v4m0-2H3",
+  ],
   script: [
     "M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4",
     "M14 2v4a2 2 0 0 0 2 2h4M5 12l-3 3 3 3m4 0 3-3-3-3",
@@ -94,11 +99,13 @@ function ThumbnailPlaceholder(packageInfo: PackageInfo, size: number): Element {
 
 // export const Card = () => {};
 function Card(packageInfo: PackageInfo): Element {
-  const background = packageInfo.images.find((image) => image.infoImg)?.infoImg?.[0];
+  const background = packageInfo.images.find((image) => image.infoImg)
+    ?.infoImg?.[0];
   const rawThumbnail = packageInfo.images
     .map(({ thumbnail: source }) => source)
     .find((source) => source !== undefined && source.length > 0);
-  const thumbnail = rawThumbnail === undefined ? undefined : resolveCatalogUrl(rawThumbnail);
+  const thumbnail =
+    rawThumbnail === undefined ? undefined : resolveCatalogUrl(rawThumbnail);
   const thumbnailSize = height - unit * 8;
 
   return div(
@@ -195,6 +202,7 @@ function Card(packageInfo: PackageInfo): Element {
             right: `${unit * 2}px`,
             objectFit: "cover",
             borderRadius: `${unit * 0.5}px`,
+            border: "2px solid #cbd5e1",
           }),
           width: thumbnailSize,
           height: thumbnailSize,
@@ -207,7 +215,8 @@ export function renderCardHtml(packageInfo: PackageInfo) {
 }
 
 export async function renderCardSvg(packageInfo: PackageInfo): Promise<string> {
-  const { loadGoogleFont, renderSvg } = await import("@sevenc-nanashi/workers-og");
+  const { loadGoogleFont, renderSvg } =
+    await import("@sevenc-nanashi/workers-og");
   return await renderSvg(Card(packageInfo).render(), {
     width,
     height,
@@ -226,8 +235,11 @@ export async function renderCardSvg(packageInfo: PackageInfo): Promise<string> {
   });
 }
 
-export async function renderCardImage(packageInfo: PackageInfo): Promise<Uint8Array<ArrayBuffer>> {
-  const { loadGoogleFont, renderImage } = await import("@sevenc-nanashi/workers-og");
+export async function renderCardImage(
+  packageInfo: PackageInfo,
+): Promise<Uint8Array<ArrayBuffer>> {
+  const { loadGoogleFont, renderImage } =
+    await import("@sevenc-nanashi/workers-og");
   return await renderImage(Card(packageInfo).render(), {
     width,
     height,
