@@ -161,24 +161,32 @@ function Card(packageInfo: PackageInfo): Element {
           left: `${unit * 2}px`,
           right: `${unit * 3 + thumbnailSize}px`,
           fontSize: `${unit * 1.5}px`,
-          fontWeight: 600,
           display: "flex",
+          flexDirection: "column",
+          gap: `${unit * 0.5}px`,
+          wordBreak: "break-word",
         }),
       },
-      packageInfo.name,
-    ),
-    div(
-      {
-        style: styles({
-          position: "absolute",
-          top: `${unit * 7}px`,
-          left: `${unit * 2}px`,
-          right: `${unit * 3 + thumbnailSize}px`,
-          fontSize: `${unit * 0.75}px`,
-          display: "flex",
-        }),
-      },
-      packageInfo.summary,
+
+      div(
+        {
+          style: styles({
+            fontSize: `${unit * 1.5}px`,
+            fontWeight: 600,
+            display: "flex",
+          }),
+        },
+        packageInfo.name.replaceAll(/(?<=[_\.])/g, /* zwsp */ "\u200B"),
+      ),
+      div(
+        {
+          style: styles({
+            fontSize: `${unit * 0.75}px`,
+            display: "flex",
+          }),
+        },
+        packageInfo.summary,
+      ),
     ),
     div(
       {
