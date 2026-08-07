@@ -38,6 +38,7 @@
     "@vitejs/plugin-vue": "^6.0.8",
     "oxfmt": "^0.62.0",
     "oxlint": "^1.77.0",
+    "rollup-plugin-license": "^3.7.1",
     "svgo": "^4.0.2",
     "typescript": "^7.0.2",
     "unocss": "^66.7.5",
