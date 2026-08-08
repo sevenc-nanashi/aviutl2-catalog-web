@@ -23,6 +23,22 @@ const rawGithubPathSchema = v.pipe(v.string(), v.minLength(1));
 const imageExtensionPattern = /\.(?:avif|gif|jpe?g|png|webp)$/i;
 const rawGithubRoutePrefix = "/api/raw/";
 
+app.use("*", async (c, next) => {
+  if (
+    c.req.url.startsWith("https://aviutl2-catalog-web.sevenc7c.workers.dev/")
+  ) {
+    return c.redirect(
+      c.req.url.replace(
+        "https://aviutl2-catalog-web.sevenc7c.workers.dev/",
+        "https://a2cw.sevenc7c.com/",
+      ),
+      301,
+    );
+  }
+
+  return next();
+});
+
 app.get("/api/badge/:name", async (c) => {
   const { name } = c.req.param();
   const data = await fetchCatalog();
