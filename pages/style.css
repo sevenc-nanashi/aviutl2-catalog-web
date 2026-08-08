@@ -30,6 +30,7 @@ body {
 
 .site-header nav {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--ui-space-2);
 }
@@ -104,7 +105,9 @@ body {
 }
 
 .site-footer {
-  padding: var(--ui-space-2);
+  padding: var(--ui-space-2) max(var(--ui-space-2), env(safe-area-inset-right))
+    max(var(--ui-space-2), env(safe-area-inset-bottom))
+    max(var(--ui-space-2), env(safe-area-inset-left));
   background: color-mix(in srgb, var(--ui-surface) 80%, transparent);
   border-top: 1px solid var(--ui-border);
   color: var(--ui-text-subtle);

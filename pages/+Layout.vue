@@ -7,6 +7,7 @@
       <nav :aria-label="t('common.navigation.main')">
         <a href="/" class="ui-focus-ring">{{ t("common.navigation.packages") }}</a>
         <a href="/badge" class="ui-focus-ring">{{ t("common.navigation.badge") }}</a>
+        <a href="/about" class="ui-focus-ring">{{ t("common.navigation.about") }}</a>
       </nav>
       <label class="locale-selector">
         <span class="sr-only">{{ t("common.language.label") }}</span>
@@ -24,7 +25,7 @@
   <div un-flex-grow />
   <footer class="site-footer">
     <a
-      href="https://github.com/sevenc-nanashi/aviutl2-catalog-badge"
+      href="https://github.com/sevenc-nanashi/aviutl2-catalog-web"
       target="_blank"
       rel="noopener noreferrer"
       class="link"

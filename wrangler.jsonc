@@ -1,18 +1,25 @@
 {
-  "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "aviutl2-catalog-web",
-  "compatibility_date": "2026-08-03",
-  "main": "vike:server-entry",
-  "limits": {
-    "cpu_ms": 250,
-  },
-  "observability": {
-    "logs": {
-      "enabled": true,
-      "invocation_logs": true,
-    },
-  },
-  "cache": {
-    "enabled": true,
-  },
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "aviutl2-catalog-web",
+	"compatibility_date": "2026-08-03",
+	"main": "vike:server-entry",
+	"limits": {
+		"cpu_ms": 250,
+	},
+	"observability": {
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true,
+		},
+	},
+	"cache": {
+		"enabled": true,
+	},
+	"d1_databases": [
+		{
+			"binding": "GITHUB_DONATIONS_DB",
+			"database_name": "aviutl2-catalog-web-donations",
+			"database_id": "8a1e2d43-06eb-4d61-82e1-979f2b9999af"
+		}
+	],
 }
