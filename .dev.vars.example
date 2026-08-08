@@ -1,0 +1,9 @@
+# GitHub OAuth App for the current environment.
+GITHUB_OAUTH_CLIENT_ID=""
+GITHUB_OAUTH_CLIENT_SECRET=""
+
+# Base64-encoded 32-byte key used to encrypt OAuth transactions and donated tokens.
+GITHUB_TOKEN_ENCRYPTION_KEY=""
+
+# Optional legacy server token. The OAuth App and donation pool work without it.
+# GITHUB_TOKEN=""
