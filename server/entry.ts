@@ -32,7 +32,7 @@ app.use("*", async (c, next) => {
         "https://aviutl2-catalog-web.sevenc7c.workers.dev/",
         "https://a2cw.sevenc7c.com/",
       ),
-      301,
+      302,
     );
   }
 
