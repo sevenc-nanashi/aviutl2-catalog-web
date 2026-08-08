@@ -15,4 +15,10 @@
   "cache": {
     "enabled": true,
   },
+  "routes": [
+    {
+      "pattern": "a2cw.sevenc7c.com",
+      "custom_domain": true,
+    },
+  ],
 }

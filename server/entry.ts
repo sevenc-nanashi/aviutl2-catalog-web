@@ -115,9 +115,7 @@ app.get("/badge/v/:packageName", (c) => {
   const url = new URL(c.req.url);
   const baseUrl =
     // NOTE: shields.ioはhttpsでしか読み込めないので、httpsでアクセスされた場合（=Branch Preview）でのみオリジンを使う
-    url.protocol === "https:"
-      ? url.origin
-      : "https://aviutl2-catalog-badge.sevenc7c.workers.dev";
+    url.protocol === "https:" ? url.origin : "https://a2cw.sevenc7c.com";
   const apiUrl = `${baseUrl}/api/badge/${encodeURIComponent(packageName)}`;
   const shieldsUrl = new URL("https://img.shields.io/endpoint");
   shieldsUrl.searchParams.set("url", apiUrl);
