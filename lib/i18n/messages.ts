@@ -6,6 +6,9 @@ export const messages = {
         main: "メインナビゲーション",
         packages: "パッケージ一覧",
         badge: "バッジを作成",
+        about: "このサイトについて",
+        openMenu: "メニューを開く",
+        closeMenu: "メニューを閉じる",
       },
       language: {
         label: "表示言語",
@@ -90,6 +93,16 @@ export const messages = {
         loadFailed: "パッケージ一覧を取得できませんでした。",
       },
     },
+    about: {
+      title: "このサイトについて",
+      description:
+        "このサイトは、{catalog}の非公式Web版です。AviUtl2 Catalogのデータを利用して、パッケージの検索や閲覧をWebブラウザ上で行うことができます。",
+      description_link: "AviUtl2 Catalog",
+      data: "このサイトで表示されるパッケージ情報は、AviUtl2 Catalogのデータを利用しています。データは{data_link}から取得しています。",
+      data_link: "Neosku/aviutl2-catalog-data",
+      source: "このサイトのソースコードは{source_link}で公開されています。",
+      source_link: "sevenc-nanashi/aviutl2-catalog-web",
+    },
     package: {
       breadcrumb: {
         label: "パンくずリスト",
@@ -153,6 +166,9 @@ export const messages = {
         main: "Main navigation",
         packages: "Package List",
         badge: "Create Badge",
+        about: "About this site",
+        openMenu: "Open menu",
+        closeMenu: "Close menu",
       },
       language: {
         label: "Display language",
@@ -236,6 +252,16 @@ export const messages = {
       errors: {
         loadFailed: "Failed to load the package list.",
       },
+    },
+    about: {
+      title: "About this site",
+      description:
+        "This site is an unofficial web version of {catalog}. It allows you to search and browse packages in your web browser using data from AviUtl2 Catalog.",
+      description_link: "AviUtl2 Catalog",
+      data: "The package information displayed on this site is based on data from AviUtl2 Catalog. The data is obtained from {data_link}.",
+      data_link: "Neosku/aviutl2-catalog-data",
+      source: "The source code for this site is available at {source_link}.",
+      source_link: "sevenc-nanashi/aviutl2-catalog-web",
     },
     package: {
       breadcrumb: {

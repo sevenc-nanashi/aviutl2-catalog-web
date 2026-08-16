@@ -2,11 +2,36 @@
 
 <template>
   <header class="site-header">
-    <a href="/" class="ui-focus-ring text-2xl">{{ t("common.appName") }}</a>
-    <div class="header-actions">
+    <a href="/" class="site-title ui-focus-ring text-2xl" @click="closeMobileMenu">{{
+      t("common.appName")
+    }}</a>
+    <button
+      ref="mobileMenuButton"
+      type="button"
+      class="mobile-menu-toggle ui-focus-ring"
+      :aria-expanded="mobileMenuOpen"
+      aria-controls="header-menu"
+      :aria-label="t(mobileMenuOpen ? 'common.navigation.closeMenu' : 'common.navigation.openMenu')"
+      @click="toggleMobileMenu"
+    >
+      <span aria-hidden="true" :class="mobileMenuOpen ? 'i-lucide-x' : 'i-lucide-menu'" />
+    </button>
+    <div
+      id="header-menu"
+      class="header-actions"
+      :class="{ 'is-open': mobileMenuOpen }"
+      @keydown.esc="closeMobileMenuAndFocusButton"
+    >
       <nav :aria-label="t('common.navigation.main')">
-        <a href="/" class="ui-focus-ring">{{ t("common.navigation.packages") }}</a>
-        <a href="/badge" class="ui-focus-ring">{{ t("common.navigation.badge") }}</a>
+        <a href="/" class="ui-focus-ring" @click="closeMobileMenu">{{
+          t("common.navigation.packages")
+        }}</a>
+        <a href="/badge" class="ui-focus-ring" @click="closeMobileMenu">{{
+          t("common.navigation.badge")
+        }}</a>
+        <a href="/about" class="ui-focus-ring" @click="closeMobileMenu">{{
+          t("common.navigation.about")
+        }}</a>
       </nav>
       <label class="locale-selector">
         <span class="sr-only">{{ t("common.language.label") }}</span>
@@ -44,6 +69,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import * as v from "valibot";
 import { localeCookie, supportedLocaleSchema } from "../lib/i18n/index.ts";
@@ -55,6 +81,28 @@ import "./design-system.css";
 import "./style.css";
 
 const { locale, t } = useI18n({ useScope: "global" });
+const mobileMenuOpen = ref(false);
+const mobileMenuButton = ref<HTMLButtonElement | null>(null);
+
+function toggleMobileMenu(): void {
+  mobileMenuOpen.value = !mobileMenuOpen.value;
+}
+
+function closeMobileMenu(): void {
+  mobileMenuOpen.value = false;
+}
+
+function closeMobileMenuAndFocusButton(): void {
+  if (!mobileMenuOpen.value) {
+    return;
+  }
+  closeMobileMenu();
+  const button = mobileMenuButton.value;
+  if (button === null) {
+    throw new Error("Mobile menu button is unavailable");
+  }
+  button.focus();
+}
 
 function changeLocale(event: Event): void {
   if (!(event.target instanceof HTMLSelectElement)) {
