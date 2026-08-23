@@ -48,6 +48,7 @@ const packageInfo = computed(() => data.packageInfo);
   margin-inline: auto;
   display: grid;
   gap: var(--space-xl);
+  overflow-wrap: anywhere;
 }
 
 .breadcrumb {
@@ -139,6 +140,7 @@ const packageInfo = computed(() => data.packageInfo);
 }
 
 .content-section {
+  min-width: 0;
   display: grid;
   gap: var(--space-md);
 }
@@ -417,6 +419,7 @@ const packageInfo = computed(() => data.packageInfo);
 }
 
 :is(.package-description) {
+  min-width: 0;
   max-width: none;
   color: var(--ui-text-muted);
   font-size: var(--ui-text-base);
